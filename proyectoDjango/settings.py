@@ -129,7 +129,7 @@ WSGI_APPLICATION = 'proyectoDjango.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Railway te inyecta DATABASE_URL automáticamente en las variables de entorno
-        default=os.environ.get('DATABASE_PUBLIC_URL'),
+        default=os.environ.get('DATABASE_URL'),
         conn_max_age=600,
         ssl_require=True  # recomendable en Railway para conexiones seguras
     )
