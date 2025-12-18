@@ -1,0 +1,142 @@
+{% load static %}
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'dashboard:inicio' %}">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <svg xmlns="http://www.w3.org/2000/svg" height="22" width="26" viewBox="0 0 640 512">
+            <!-- Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc. -->
+            <path d="M640 0V400c0 61.9-50.1 112-112 112c-61 0-110.5-48.7-112-109.3L48.4 502.9c-17.1 4.6-34.6-5.4-39.3-22.5s5.4-34.6 22.5-39.3L352 353.8V64c0-35.3 28.7-64 64-64H640zM576 400a48 48 0 1 0 -96 0 48 48 0 1 0 96 0zM23.1 207.7c-4.6-17.1 5.6-34.6 22.6-39.2l46.4-12.4 20.7 77.3c2.3 8.5 11.1 13.6 19.6 11.3l30.9-8.3c8.5-2.3 13.6-11.1 11.3-19.6l-20.7-77.3 46.4-12.4c17.1-4.6 34.6 5.6 39.2 22.6l41.4 154.5c4.6 17.1-5.6 34.6-22.6 39.2L103.7 384.9c-17.1 4.6-34.6-5.6-39.2-22.6L23.1 207.7z" fill="#ffffff"/>
+            </svg>
+        </div>
+        <div class="sidebar-brand-text mx-3">Inventario</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+        <a class="nav-link" href="{% url 'dashboard:inicio' %}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Panel de Control</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    {% if perms.clientes.ver_clientes or perms.clientes.crear_clientes or perms.clientes.editar_clientes or perms.clientes.eliminar_clientes %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'clientes:listado_clientes' %}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Clientes</span></a>
+        </li>
+    {% endif %}
+
+    {% if perms.proveedores.ver_proveedores or perms.proveedores.crear_proveedores or perms.proveedores.editar_proveedores or perms.proveedores.eliminar_proveedores %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'proveedores:listado_proveedores' %}">
+                <i class="fas fa-fw fa-user"></i>
+                <span>Proveedores</span></a>
+        </li>
+    {% endif %}
+
+    {% if perms.articulos.ver_productos or perms.articulos.crear_productos or perms.articulos.editar_productos or perms.articulos.eliminar_productos or perms.categorias.ver_categorias or perms.categorias.crear_categorias or perms.inventario.editar_categorias or perms.categorias.eliminar_categorias or perms.lotes.ver_lotes or perms.lotes.editar_lotes %}
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseArticulos"
+            aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-cubes"></i>
+                <span>Gestión de Productos</span>
+            </a>
+            <div id="collapseArticulos" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {% if perms.categorias.ver_categorias or perms.categorias.crear_categorias or perms.categorias.editar_categorias or perms.categorias.eliminar_categorias %}
+                        <a class="collapse-item" href="{% url 'categorias:listado_categorias' %}">Categorías</a>
+                    {% endif %}
+
+                    {% if perms.articulos.ver_productos or perms.articulos.crear_productos or perms.articulos.editar_productos or perms.articulos.eliminar_productos %}
+                        <a class="collapse-item" href="{% url 'articulos:listado_articulos' %}">Productos</a>
+                    {% endif %}
+
+                    {% if perms.lotes.ver_lotes or perms.lotes.editar_lotes %}
+                        <a class="collapse-item" href="{% url 'lotes:listado_lotes' %}">Lotes</a>
+                    {% endif %}
+                </div>
+            </div>
+        </li>
+    {% endif %}
+
+    {% if perms.compras.ver_compras or perms.compras.crear_compras or perms.ventas.ver_ventas or perms.ventas.crear_ventas %}
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseExistencias"
+            aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-exchange-alt"></i>
+                <span>Gestión de Existencias</span>
+            </a>
+            <div id="collapseExistencias" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {% if perms.compras.ver_compras or perms.compras.crear_compras %}
+                        <a class="collapse-item" href="{% url 'compras:listado_compras' %}">Compras</a>
+                    {% endif %}
+
+                    {% if perms.ventas.ver_ventas or perms.ventas.crear_ventas %}
+                        <a class="collapse-item" href="{% url 'ventas:listado_ventas' %}">Ventas</a>
+                    {% endif %}
+                </div>
+            </div>
+        </li>
+    {% endif %}
+
+    {% if perms.usuarios.ver_usuarios or perms.usuarios.crear_usuarios or perms.usuarios.editar_usuarios or perms.usuarios.eliminar_usuarios or perms.usuarios.ver_roles or perms.usuarios.crear_roles or perms.usuarios.editar_roles or perms.usuarios.eliminar_roles %}
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsuarios"
+            aria-expanded="true" aria-controls="collapseTwo">
+                <i class="fas fa-fw fa-users"></i>
+                <span>Gestión de Usuarios</span>
+            </a>
+            <div id="collapseUsuarios" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    {% if perms.usuarios.ver_roles or perms.usuarios.crear_roles or perms.usuarios.editar_roles or perms.usuarios.eliminar_roles %}
+                        <a class="collapse-item" href="{% url 'roles:roles' %}">Roles</a>
+                    {% endif %}
+
+                    {% if perms.usuarios.ver_usuarios or perms.usuarios.crear_usuarios or perms.usuarios.editar_usuarios or perms.usuarios.eliminar_usuarios %}
+                        <a class="collapse-item" href="{% url 'usuarios:listado_usuarios' %}">Usuarios</a>
+                    {% endif %}
+                </div>
+            </div>
+        </li>
+    {% endif %}
+
+    {% if perms.empresa.generar_reportes %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'informe:reporte_inicio' %}">
+                <i class="fas fa-fw fa-file-alt"></i>
+                <span>Reportes</span></a>
+        </li>
+    {% endif %}
+
+    {% if perms.empresa.editar_empresa %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'empresa:configuracion' %}">
+                <i class="fas fa-fw fa-cog"></i>
+                <span>Configuración</span></a>
+        </li>
+    {% endif %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'authentication:exit' %}">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Salir</span></a>
+        </li>
+    
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+</ul>
+<!-- End of Sidebar -->

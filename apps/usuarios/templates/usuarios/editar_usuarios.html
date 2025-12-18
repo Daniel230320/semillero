@@ -1,0 +1,151 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Editar Usuarios{% endblock titulo %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Editar Usuarios</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'usuarios:listado_usuarios' %}">Usuarios</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Editar Usuario</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Contenido principal: dos cards lado a lado -->
+    <div class="row">
+        <!-- Card de Información General -->
+        <div class="col-md-7">
+            <div class="card shadow mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+                    <h6 class="m-0 font-weight-bold text-primary h5">
+                        <i class="fas fa-edit mr-2"></i>Información General del Usuario
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% load crispy_forms_tags %}
+                    <form method="POST" action="" id="miFormulario">
+                        {% csrf_token %}
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.username | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.groups | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.first_name | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.last_name | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            {{ form.email | as_crispy_field }}
+                        </div>
+                        <div class="form-group">
+                            {{ form.direccion | as_crispy_field }}
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.telefono | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6">
+                                {{ form.celular | as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                {{ form.is_active | as_crispy_field }}
+                            </div>
+                        </div>
+                        <!-- Campo oculto para indicar acción -->
+                        <input type="hidden" name="user_update_info" value="1">
+                        <div class="text-center mt-3">
+                            <!-- Botón de tipo "button" para controlar el envío vía JS -->
+                            <button type="button" name="user_update_info" class="btn btn-sm btn-primary botonModificar">
+                                <i class="fas fa-save"></i> Editar
+                            </button>
+                            <button type="button" name="editar_continuar" class="btn btn-sm btn-success ml-2 botonModificar">
+                                <i class="fas fa-save"></i> Editar y Continuar
+                            </button>
+                            <button type="reset" class="btn btn-sm btn-warning ml-2">
+                                <i class="fas fa-eraser"></i> Deshacer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Card de Cambio de Contraseña -->
+        <div class="col-md-5">
+            <div class="card shadow mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+                    <h6 class="m-0 font-weight-bold text-primary h5">
+                        <i class="fas fa-key mr-2"></i>Cambiar Contraseña del Usuario
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="" id="FormPassword">
+                        {% csrf_token %}
+                        <div class="form-group col-md-12">
+                            {{ user_password_form.password1 | as_crispy_field }}
+                        </div>
+                        <div class="form-group col-md-12">
+                            {{ user_password_form.password2 | as_crispy_field }}
+                        </div>
+                        <!-- Campo oculto para indicar acción -->
+                        <input type="hidden" name="user_change_password" value="1">
+                        <div class="text-center mt-3">
+                            <button type="button" name="user_change_password" class="btn btn-sm btn-primary" id="btnModificarPassword">
+                                <i class="fas fa-save"></i> Cambiar Contraseña
+                            </button>  
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- SweetAlert Confirmación para Cambio de Contraseña -->
+    <script>
+        document.getElementById('btnModificarPassword').addEventListener('click', function (event) {
+            event.preventDefault();
+            Swal.fire({
+                title: "¿Estás seguro de modificar?",
+                text: "Esta acción no se puede deshacer",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#4169E1"
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    document.getElementById('FormPassword').submit();
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function agregarAsterisco(idDiv) {
+            const label = document.getElementById(idDiv)?.firstElementChild;
+            if (label) {
+                const span = document.createElement("span");
+                span.innerHTML = '*';
+                span.classList.add('asteriskField');
+                label.appendChild(span);
+            }
+        }
+
+        agregarAsterisco('div_id_password1');
+        agregarAsterisco('div_id_password2');
+    </script>
+{% endblock script %}

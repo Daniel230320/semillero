@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura de Venta</title>
+    <style type="text/css">
+        @page {
+            size: A4;
+            margin: 1.2cm;
+            @top-center {
+                content: none;
+            }
+            @bottom-center {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 12px;
+                color: #777;
+            }
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 9pt;
+            color: #333;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .company-info {
+            flex: 1;
+            padding-right: 1.5rem;
+            border-right: 1px solid #eee;
+        }
+
+        .company-info h2 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.3rem;
+            color: #2c3e50;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .company-info .info-section {
+            margin-bottom: 0.8rem;
+        }
+
+        .company-info .info-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.75rem;
+            margin-bottom: 0.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .company-info .info-content {
+            font-size: 0.8rem;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .logo {
+            height: 60px;
+            margin-bottom: 0.8rem;
+        }
+
+        .info-cliente {
+            flex: 1;
+            padding-left: 1.5rem;
+        }
+
+        .info-cliente .section-title {
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: bold;
+            margin: 0 0 0.8rem 0;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid #eee;
+            text-transform: uppercase;
+        }
+
+        .info-cliente .info-row {
+            display: flex;
+            margin-bottom: 0.4rem;
+            align-items: flex-start;
+        }
+
+        .info-cliente .info-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.75rem;
+            width: 35%;
+            text-transform: uppercase;
+        }
+
+        .info-cliente .info-value {
+            font-size: 0.8rem;
+            color: #555;
+            width: 65%;
+            line-height: 1.4;
+        }
+
+        .info-logo .logo {
+            width: 80px;           /* Aumentar el tamaño del logo */
+            height: auto;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            background-color: #fff;
+            box-shadow: 0 0 3px rgba(0,0,0,0.05);
+        }
+
+        th {
+            background-color: #3d566e;
+            color: white;
+            padding: 0.4rem;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 1px solid #ddd;
+            border-top: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+        }
+
+        td {
+            padding: 0.3rem 0.4rem;
+            border: 1px solid #ddd;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .total-row {
+            background-color: #2c3e50;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 0.8rem;
+            font-style: italic;
+            color: #777;
+            font-size: 0.85rem;
+        }
+
+        .number {
+            text-align: right;
+            padding-right: 0.8rem;
+        }
+
+        .currency::before {
+            content: "$";
+            margin-right: 2px;
+            font-size: 0.8rem;
+        }
+
+        .observaciones {
+            text-align: center;
+            border: 1px solid #ddd;
+            padding: 0.5rem;
+            background-color: #f1f4f8;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            box-shadow: 0 0 3px rgba(0,0,0,0.05);
+        }
+
+        .observaciones p {
+            margin: 0.2rem 0;
+        }
+
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        /* Estilos para la tabla de distribución */
+        .distribucion-consolidada {
+            margin-top: 1.5rem;
+        }
+
+        .distribucion-consolidada h3 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #2c3e50;
+            text-transform: uppercase;
+        }
+
+        .dist-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+
+        .dist-table th {
+            background-color: #3d566e;
+            color: white;
+            padding: 0.4rem;
+            font-weight: 600;
+        }
+
+        .dist-table td {
+            padding: 0.4rem;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .dist-table tr.separator td {
+            padding: 0;
+            height: 1px;
+            background-color: #ddd;
+        }
+
+        .dist-table .total-row {
+            background-color: #f1f4f8;
+            font-weight: bold;
+        }
+
+        /* Nuevos estilos para la tabla de indicadores nutricionales */
+        .indicadores-nutricionales {
+            margin-top: 1.5rem;
+            page-break-inside: avoid;
+        }
+
+        .indicadores-nutricionales h3 {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            color: #2c3e50;
+            padding: 0.5rem;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .nutri-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .nutri-table th {
+            background-color: #3d566e;
+            color: white;
+            padding: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .nutri-table td {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .nutri-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .nutri-table .total-row {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+
+        .nivel-celda {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-align: center;
+            min-width: 80px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: 1px solid transparent;
+            background-color: rgba(255,255,255,0.9);
+            display: table-cell;
+            width: 10%;
+            box-sizing: border-box;
+        }
+
+        .no-contiene { /* Azul corporativo */
+            color:rgb(255, 255, 255);
+            border-color: #3498db;
+            background-color: #3498db;
+        }
+
+        .bajo { /* Verde discreto */
+            color:rgb(255, 255, 255);
+            border-color: #2ecc71;
+            background-color: #2ecc71;
+        }
+
+        .medio { /* Amarillo moderado */
+            color:rgb(255, 255, 255);
+            border-color:rgb(231, 235, 13);
+            background-color: rgb(231, 235, 13);
+        }
+
+        .alto { /* Rojo profesional */
+            color:rgb(255, 255, 255);
+            border-color: #e74c3c;
+            background-color: #e74c3c;
+        }
+
+        /* Estilos para el diseño responsivo */
+        @media print {
+            .header-container {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="company-info">
+            <div class="info-logo">
+                {% if logo_url %}
+                    <img class="logo" src="{{ logo_url }}" alt="Logo de la empresa">
+                {% endif %}
+            </div>
+            <h2>{{ empresa.nombrecomercial }}</h2>
+            
+            <div class="info-section">
+                <div class="info-title">Información Legal</div>
+                <div class="info-content">
+                    <strong>Razón Social:</strong> {{ empresa.razonsocial }}<br>
+                    <strong>RUC:</strong> {{ empresa.RUC }}
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="info-title">Direcciones</div>
+                <div class="info-content">
+                    <strong>Matriz:</strong> {{ empresa.direccion1 }}<br>
+                    <strong>Sucursal:</strong> {{ empresa.direccion2 }}
+                </div>
+            </div>
+            
+            <div class="info-section">
+                <div class="info-title">Contacto</div>
+                <div class="info-content">
+                    <strong>Teléfono:</strong> {{ empresa.telefono_empresa }}<br>
+                    <strong>Correo:</strong> {{ empresa.correo_empresa }}
+                </div>
+            </div>
+        </div>
+
+        <div class="info-cliente">
+            <h3 class="section-title">FACTURA</h3>
+            <div class="info-row">
+                <div class="info-label">No. Factura:</div>
+                <div class="info-value">{{ venta.idventa }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Fecha Emisión:</div>
+                <div class="info-value">{{ venta.fecha_venta }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Cliente:</div>
+                <div class="info-value">{{ venta.idcliente.nombre_cliente }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">R.U.C / C.I:</div>
+                <div class="info-value">{{ venta.idcliente.numerodocumento }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Dirección:</div>
+                <div class="info-value">{{ venta.idcliente.direccion_cliente }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Teléfono:</div>
+                <div class="info-value">{{ venta.idcliente.telefono_cliente }}</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Forma de Pago:</div>
+                <div class="info-value">Efectivo</div>
+            </div>
+            
+            <div class="info-row">
+                <div class="info-label">Atendido por:</div>
+                <div class="info-value">{% if venta.user.first_name or venta.user.last_name %}{{ venta.user.first_name }} {{ venta.user.last_name }}{% else %}{{ venta.user.username }}{% endif %}</div>
+            </div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cantidad</th>
+                <th>Producto</th>
+                <th>Precio Unitario</th>
+                <th>Descuento</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if venta_detalles %}
+                {% for det in venta_detalles %}
+                    <tr>
+                        <td>{{ det.cantidad }}</td>
+                        <td>{{ det.codigoarticulo.descripcion_articulo }}</td>
+                        <td class="number currency">{{ det.preciounitario|floatformat:2 }}</td>
+                        <td class="number currency">{{ det.valordescuento|floatformat:2 }}</td>
+                        <td class="number currency">{{ det.valor|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5" class="no-results">No se encontraron detalles de venta</td>
+                </tr>
+            {% endif %}
+        </tbody>
+        <tfoot>
+            {% if venta %}
+                <tr>
+                    <td colspan="4" style="text-align: right; font-weight: bold;">Subtotal 15%:</td>
+                    <td class="number currency">{{ venta.subtotal_tarifa0|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; font-weight: bold;">Subtotal 0%:</td>
+                    <td class="number currency">{{ venta.subtotal_tarifa12|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; font-weight: bold;">Descuento Total:</td>
+                    <td class="number currency">{{ venta.descuento|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; font-weight: bold;">Subtotal:</td>
+                    <td class="number currency">{{ venta.subtotal|floatformat:2 }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; font-weight: bold;">IVA %:</td>
+                    <td class="number currency">{{ venta.valoriva|floatformat:2 }}</td>
+                </tr>
+                <tr class="total-row">
+                    <td colspan="4" style="text-align: right; font-weight: bold;">Total:</td>
+                    <td class="number currency highlight">{{ venta.total|floatformat:2 }}</td>
+                </tr>
+            {% endif %}
+        </tfoot>
+    </table>
+
+    <!-- Sección de Distribución Consolidada -->
+    <div class="distribucion-consolidada">
+        <h3>DETALLE NUTRICIONAL TIPO DE PRODUCTO</h3>
+        <table class="dist-table">
+            <thead>
+                <tr>
+                    <th>Indicador</th>
+                    <th>General</th>
+                    <th>Azúcar</th>
+                    <th>Grasa</th>
+                    <th>Sal</th>
+                    <th>TOTAL</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fila in distribucion_consolidada %}
+                    {% if fila.tipo == 'separador' %}
+                        <tr class="separator"><td colspan="6"></td></tr>
+                    {% else %}
+                        <tr class="{% if 'TOTAL' in fila.indicador or 'PORCENTAJE' in fila.indicador %}total-row{% endif %}">
+                            <td>{{ fila.indicador }}</td>
+                            <td>{{ fila.general }}</td>
+                            <td>{{ fila.azucar }}</td>
+                            <td>{{ fila.grasa }}</td>
+                            <td>{{ fila.sal }}</td>
+                            <td>{{ fila.total }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sección de Indicadores Nutricionales -->
+    <div class="indicadores-nutricionales">
+        <h3>DETALLES NUTRICIONALES</h3>
+        <table class="nutri-table">
+            <thead>
+                <tr>
+                    <th rowspan="2">Nivel</th>
+                    <th colspan="2">Azúcar</th>
+                    <th colspan="2">Sal</th>
+                    <th colspan="2">Grasa</th>
+                    <th rowspan="2">Total</th>
+                </tr>
+                <tr>
+                    <th>Unidades</th>
+                    <th>%</th>
+                    <th>Unidades</th>
+                    <th>%</th>
+                    <th>Unidades</th>
+                    <th>%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in indicadores_nutricionales.tabla %}
+                <tr class="{% if item.nivel == 'TOTAL' %}total-row{% endif %}">
+                    <td class="nivel-celda 
+                        {% if 'No' in item.nivel %}no-contiene
+                        {% elif 'Bajo' in item.nivel %}bajo
+                        {% elif 'Medio' in item.nivel %}medio
+                        {% elif 'Alto' in item.nivel %}alto{% endif %}">
+                        {{ item.nivel }}
+                    </td>
+                    <td>{{ item.azucar }}</td>
+                    <td>{{ item.azucar_porcentaje }}</td>
+                    <td>{{ item.sal }}</td>
+                    <td>{{ item.sal_porcentaje }}</td>
+                    <td>{{ item.grasa }}</td>
+                    <td>{{ item.grasa_porcentaje }}</td>
+                    <td>{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if venta %}
+        <div class="observaciones">
+            <p>****************** ESTIMADO CLIENTE ******************</p>
+            <p>Usted va a pagar en efectivo un total de <span class="currency">{{ pago.monto|floatformat:2 }}</span></p>
+            <p>Por lo tanto, debe recibir un cambio de <span class="currency">{{ cambio|floatformat:2 }}</span></p>
+            <p>Total de productos: {{ total_cantidad }}</p>
+        </div>
+    {% endif %}
+</body>
+</html>

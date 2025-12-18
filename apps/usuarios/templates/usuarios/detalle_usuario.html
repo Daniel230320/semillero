@@ -1,0 +1,126 @@
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content border-0 shadow-lg">
+        <!-- Encabezado -->
+        <div class="modal-header bg-light">
+            <h5 class="modal-title text-dark font-weight-bold">
+                <i class="fas fa-user text-primary mr-2"></i>Información del Usuario
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="text-muted">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body p-4">
+            <!-- Pestañas -->
+            <ul class="nav nav-tabs nav-tabs-clean mb-4">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#detalles">
+                        <i class="fas fa-info-circle mr-2"></i> Datos Generales
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Contenido -->
+            <div class="tab-content">
+                <div id="detalles" class="tab-pane fade show active">
+                    <div class="list-group list-group-flush details">
+                        {% if usuario %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Usuario:</div>
+                                <div class="col-sm-8 font-weight-bold">{{ usuario.username }}</div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Nombre:</div>
+                                <div class="col-sm-8 font-weight-bold">{{ usuario.first_name }} {{ usuario.last_name }}</div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Correo:</div>
+                                <div class="col-sm-8">
+                                    <a href="mailto:{{ usuario.email }}" class="text-primary">
+                                        <i class="fas fa-envelope text-secondary mr-2"></i>
+                                        <span class="font-weight-bold">{{ usuario.email }}</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Teléfono:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-phone text-secondary mr-2"></i>
+                                    <span class="font-weight-bold">{{ usuario.telefono|default_if_none:'-' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Celular:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-mobile-alt text-secondary mr-2"></i>
+                                    <span class="font-weight-bold">{{ usuario.celular|default_if_none:'-' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Dirección:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-map-marker-alt text-secondary mr-2"></i>
+                                    <span class="font-weight-bold">{{ usuario.direccion|default_if_none:'-' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Rol:</div>
+                                <div class="col-sm-8">
+                                    {% for rol in roles_usuario %}
+                                        <i class="fas fa-user-tag text-secondary mr-2"></i>
+                                        <span class="font-weight-bold">{{ rol.name }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Último acceso:</div>
+                                <div class="col-sm-8 font-weight-bold">
+                                    {% if usuario.last_login %}
+                                        {{ usuario.last_login|date:"d/m/Y h:i A" }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Registro:</div>
+                                <div class="col-sm-8 font-weight-bold">
+                                    {{ usuario.date_joined|date:"d/m/Y h:i A" }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Estado:</div>
+                                <div class="col-sm-8">
+                                    <span class="badge badge-pill {% if usuario.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                                        {% if usuario.is_active %}Activo{% else %}Inactivo{% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

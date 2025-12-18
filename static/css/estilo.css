@@ -1,0 +1,386 @@
+/* ESTILOS CSS BASE GENERALES PARA LA MAYORÍA DE COMPONENTES */
+
+/* ========================================
+    Estilo moderno pestañas de navegacion menu
+    ======================================= */
+body { 
+  color: #545151 !important; /* Texto de este color */
+}
+
+.nav-tabs-bordered {
+  border-bottom: 3px solid #ebeef4;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nav-tabs-bordered .nav-link {
+  margin-bottom: -3px;
+  border: none;
+  color: #2c384e;
+  flex-grow: 1;
+  text-align: center;
+  min-width: 120px; /* Ancho mínimo para cada pestaña */
+}
+
+.nav-tabs-bordered .nav-link:hover,
+.nav-tabs-bordered .nav-link:focus {
+  color: #4169E1;
+}
+
+.nav-tabs-bordered .nav-link.active {
+  background-color: #fff;
+  color: #4169E1;
+  border-bottom: 3px solid #4169E1;
+}
+
+@media (max-width: 768px) {
+  .nav-tabs-bordered {
+    flex-direction: column;
+    border-bottom: none;
+  }
+  
+  .nav-tabs-bordered .nav-link {
+    margin-bottom: 5px;
+    border-bottom: 3px solid #ebeef4;
+    text-align: left;
+  }
+  
+  .nav-tabs-bordered .nav-link.active {
+    border-bottom: 3px solid #4169E1;
+  }
+}
+
+/* ==============================================
+    Estilo moderno para (table) tablas y profesional
+    ============================================= */
+
+table {
+  width: 100%;
+  border-collapse: separate; /* Permite bordes redondeados */
+  border-spacing: 0;
+  margin: 1.5em 0;
+  color: #545151;
+  background: #fff;
+  border-radius: 6px; /* Bordes redondeados suaves */
+  overflow: hidden; /* Para que los bordes redondeados funcionen */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra sutil */
+}
+table th {
+  background-color: #f0f2f5;
+  color: #545151;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e0e3e7;
+  position: sticky;
+  top: 0; /* Opcional: headers fijos al hacer scroll */
+}
+
+/* Celdas con bordes sutiles y buen espaciado */
+table td {
+  color: #545151;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s ease; /* Para el hover */
+}
+
+/* Efecto hover con transición suave */
+table tbody tr:hover td {
+  background-color: #f5f7fa;
+}
+
+/* Evitar transición previa */
+table.list-products tbody tr:hover td {
+  background-color: inherit;
+}
+
+/* Pequeño detalle: primera y última celda con bordes redondeados */
+table tr:first-child th:first-child {
+  border-top-left-radius: 6px;
+}
+table tr:first-child th:last-child {
+  border-top-right-radius: 6px;
+}
+table tr:last-child td:first-child {
+  border-bottom-left-radius: 6px;
+}
+table tr:last-child td:last-child {
+  border-bottom-right-radius: 6px;
+}
+
+/* ================================ 
+    estilo para card borde azul arriba 
+    =============================== */
+.card-csslist {
+  border-top: 3px solid #4e73df !important;
+  border-radius: 0.375rem;
+}
+
+/* ============================================
+    Estilo Asterisco rojo para campos obligatorios 
+    =========================================== */
+.asteriskField {
+  color: red;
+}
+
+/* =======================================================
+    Estilo para iconos de exportar imagen y pantalla completa 
+    ====================================================== */
+.expand-icon {
+  font-size: 1rem;
+  color: #6c757d;
+}
+.expand-icon:hover {
+  color: #000;
+}
+
+/* ===================== 
+    Estilo de cursor manito 
+    ==================== */
+select {
+  cursor: pointer;
+}
+label,
+input[type="checkbox"] {
+  cursor: pointer;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* =========================================================
+    Estilos personalizados para los iconos dentro de los campos 
+    ======================================================== */
+/* .input-with-iconfas {
+  position: relative;
+}
+
+.input-iconfas {
+  position: absolute;
+  left: 10px;
+  top: 46px;
+  Valor fijo (en píxeles) que se debe ajustar según la altura de los input 
+  transform: translateY(-50%);
+  color: #6c757d;
+}
+
+.input-with-iconfas .form-control {
+  padding-left: 30px;
+}
+
+.input-with-iconfas .invalid-feedback {
+  position: relative;
+} */
+
+/* =================================================== 
+    Estilos específicos para campos dentro del contenedor 
+    ================================================== */
+.container-fluid input[type="text"],
+.container-fluid input[type="number"],
+.container-fluid input[type="file"],
+.container-fluid input[type="search"],
+.container-fluid input[type="date"],
+.container-fluid input[type="email"],
+.container-fluid input[type="password"],
+.container-fluid input[type="tel"],
+.container-fluid input[type="datetime-local"],
+.container-fluid input[type="month"],
+.container-fluid input[type="week"],
+.container-fluid input[type="time"],
+.container-fluid select {
+  font-size: 14px;
+  height: 35px;
+  color: #545151 !important;
+}
+
+.container-fluid .select2-container .select2-selection--single {
+  font-size: 14px;
+  height: 30.7px;
+}
+
+.container-fluid label {
+  font-weight: bold;
+  color: #545151 !important;
+}
+
+textarea {
+  color: #545151 !important;
+}
+
+/* =========================
+   Estilo animación de campana
+   ========================= */
+@keyframes ring {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-15deg);
+  }
+
+  50% { /* Gira a la izquierda */
+    transform: rotate(15deg);
+  }
+
+  75% { /* Gira a la derecha */
+    transform: rotate(-10deg);
+  }
+
+  100% { /* Gira a la izquierda */
+    transform: rotate(0deg);
+  }
+
+  /* Vuelve a la posición inicial */
+}
+
+.ring {
+  animation: ring 0.5s ease-in-out infinite;
+  /* Duración y repetición */
+  transform-origin: top center;
+  /* El punto de rotación es la parte superior */
+}
+
+/* ======================================= 
+    Estilo para color de botones notificacion 
+    ====================================== */
+.dropdown-list .dropdown-header .d-flex a i {
+  transition: color 0.1s ease-in-out;
+}
+
+.dropdown-list .dropdown-header .d-flex a:hover i {
+  color: #b7b7b7;
+}
+
+/* ============================================================
+    Estilo para colapsado/expandido y boton abrir y cerrar filtro 
+    =========================================================== */
+
+/* Animación más suave */
+.collapsing {
+  transition: height 0.4s ease-in-out !important;
+}
+
+#toggleButton,
+#closeFilterButton {
+  background-color: #f8f9fc;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 14px;
+  color: #6c757d;
+  cursor: pointer;
+  transition: color 0.4s ease-in-out;
+}
+
+#toggleButton:hover i,
+#closeFilterButton:hover i {
+  color: #333;
+}
+
+
+/* =========================
+   Estilos modernos para Select2 (Bootstrap4 Theme)
+   ========================= */
+
+/* Contenedor principal */
+.select2-container--bootstrap4 {
+  font-size: 14px;
+}
+
+/* Estilo suave para el select cuando está enfocado - prioridad sobre Bootstrap */
+.select2-container--bootstrap4 .select2-selection--single:focus,
+.select2-container--bootstrap4.select2-container--open .select2-selection--single {
+  border-color: #a8c0ff !important;
+  box-shadow: 0 0 0 0.1rem rgba(168, 192, 255, 0.3) !important;
+  z-index: 1051; /* Mayor que el z-index de modales de Bootstrap (1050) */
+}
+
+/* Buscador dentro del dropdown */
+.select2-container--bootstrap4 .select2-search--dropdown .select2-search__field {
+  border: 1px solid #abb9ce;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.select2-container--bootstrap4 .select2-search--dropdown .select2-search__field:focus {
+  border-color: #a8c0ff;
+  box-shadow: 0 0 0 0.1rem rgba(168, 192, 255, 0.3);
+}
+
+
+/* =========================
+   Estilos modernos para los tooltips
+   ========================= */
+.tooltip-inner {
+  background-color: #2c384e;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 5px 5px;
+  font-size: 0.85rem;
+  box-shadow: 15 15px 16px rgba(0, 0, 0, 0.15);
+  max-width: 300px;
+  text-align: left;
+  line-height: 1.4;
+}
+
+/* Flecha del tooltip - versión moderna */
+.bs-tooltip-auto[x-placement^=top] .arrow::before,
+.bs-tooltip-top .arrow::before {
+  border-top-color: #2c384e;
+}
+
+.tooltip.show {
+  opacity: 1;
+  transform: translateY(-2px);
+  /* Efecto de levitación */
+}
+
+/* =========================
+   Estilos modernos para modales de informacion
+   ========================= */
+.modal-content {
+  border-radius: 0.5rem;
+
+}
+
+.modal-content .nav-tabs-clean {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.modal-content .nav-tabs-clean .nav-link {
+  border: none;
+  color: #2c3e50;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.modal-content .nav-tabs-clean .nav-link.active {
+  color: #4e73df;
+  border-bottom-color: #4e73df;
+  background-color: transparent;
+}
+
+.modal-content .nav-tabs-clean .nav-link:hover {
+  color: #4e73df;
+}
+
+.modal-content .nav-tabs-clean .nav-link:focus {
+  color: #4e73df;
+}
+
+.modal-content .details .list-group-item {
+  padding: 0.75rem 0;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content .details .list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+.modal-content a.text-primary:hover {
+  text-decoration: underline;
+}
+

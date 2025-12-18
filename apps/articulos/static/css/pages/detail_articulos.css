@@ -1,0 +1,62 @@
+/* =========================
+   Estilos modernos para modal detalle articulo
+   ========================= */
+.modal-content .product-image {
+    max-height: 200px;
+    width: auto;
+    object-fit: contain;
+}
+
+.modal-content .detail-list .list-group-item {
+    padding: 0.75rem 0;
+}
+
+.modal-content .finance-list li,
+.modal-content .inventory-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.modal-content .finance-list li:last-child,
+.modal-content .inventory-list li:last-child {
+    border-bottom: none;
+}
+
+.modal-content .card {
+    border-radius: 0.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modal-content .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+}
+
+.modal-content .fa-lg {
+    font-size: 1.33em;
+    vertical-align: middle;
+}
+
+/* ESTILOS PARA SEMAFORO NUTRICIONAL */
+.nutriente-card {
+    padding: 1rem;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.nutriente-card-danger {
+    background-color: #E12E28;
+}
+
+.nutriente-card-warning {
+    background-color: #E6D603;
+}
+
+.nutriente-card-success {
+    background-color: #3EB349;
+}
+
+.nutriente-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}

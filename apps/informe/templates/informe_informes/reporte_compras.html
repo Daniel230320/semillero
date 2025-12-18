@@ -1,0 +1,98 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Reporte de Compras{% endblock titulo %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Generación de Reportes</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'informe:reporte_inicio' %}">Reportes</a></li>
+                <li class="breadcrumb-item" aria-current="page">Reporte Compras</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-book-open mr-2"></i>Consultar Reporte de Compras</h6>
+        </div>
+        <div class="card-body">
+            {% load crispy_forms_tags %}
+            <form id="reportForm" method="GET" action="{% url 'informe:generar_pdf_compras' 'False' %}">
+                <div class="row">
+                    <div class="col-md-2">
+                        {{ compras_filter.form.fecha_compra_desde|as_crispy_field }}
+                    </div>
+                    <div class="col-md-2">
+                        {{ compras_filter.form.fecha_compra_hasta|as_crispy_field }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ compras_filter.form.user|as_crispy_field }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ compras_filter.form.idproveedor|as_crispy_field }}
+                    </div>
+                </div>
+
+                <!-- Divider (hr) -->
+                <hr style="margin-left: -20px; margin-right: -20px;">
+                
+                <button type="submit" class="btn btn-primary btn-sm mt-2 mr-2 btnGenerarPDF">
+                    <i class="fas fa-file-pdf"></i> Generar Reporte
+                </button>
+                <button type="button" class="btn btn-info btn-sm mt-2 mr-2 btnDescargarPDF">
+                    <i class="fas fa-download"></i> Descargar Reporte
+                </button>
+                <a href="{{ request.path }}" type="reset" class="btn btn-warning btn-sm mt-2 mr-2">
+                    <i class="fas fa-sync"></i> Limpiar
+                </a>
+            </form>        
+        </div>
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- Script para botones generar y descargar reporte -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Función para abrir una nueva ventana con los datos del formulario
+            function openReportWindow(download = false) {
+                var form = document.getElementById('reportForm');
+                var url = "{% url 'informe:generar_pdf_compras' 'False' %}"; // URL base
+                var params = new URLSearchParams(new FormData(form)).toString();
+                if (download) {
+                    url = url.replace('False', 'True');
+                }
+
+                // Construir la URL final con los parámetros del formulario
+                var newUrl = url + '?' + params;
+
+                // Abrir la nueva ventana
+                window.open(newUrl, '_blank', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resizable=yes,width=800,height=600,top=100,left=100');
+            }
+
+            // Evento para el botón de Generar Reporte
+            document.querySelector('.btnGenerarPDF').addEventListener('click', function(event) {
+                event.preventDefault();
+                openReportWindow(false); // Abrir ventana sin descargar
+            });
+
+            // Evento para el botón de Descargar Reporte
+            document.querySelector('.btnDescargarPDF').addEventListener('click', function(event) {
+                event.preventDefault();
+                var form = document.getElementById('reportForm');
+                var url = "{% url 'informe:generar_pdf_compras' 'True' %}"; // URL para descargar
+                var params = new URLSearchParams(new FormData(form)).toString();
+                var newUrl = url + '?' + params;
+
+                // Redirigir directamente a la URL de descarga
+                window.location.href = newUrl;
+            });
+        });
+    </script>
+{% endblock script %}
+

@@ -1,0 +1,365 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Configuración{% endblock titulo %}
+{% load static %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Configuración General</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Configuración</li>
+            </ol>
+        </nav>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-fw fa-cog mr-2"></i>Configuración del Sistema</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+
+                <!-- Card para el formulario (ahora ocupa todo el ancho) -->
+                <div class="col-md-12">
+                    <div class="card mb-4 border-1 shadow-sm">
+                        <div class="card-body">
+                            {% load crispy_forms_tags %}
+                            <form method="POST" id="miFormulario" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ formset.management_form }}
+
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs nav-tabs-bordered">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-toggle="tab" href="#notificaciones">
+                                            <i class="fas fa-bell mr-2"></i>Notificaciones
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#detalles">
+                                            <i class="fas fa-info-circle mr-2"></i>Perfil Empresa
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#direccion">
+                                            <i class="fas fa-map-marked-alt mr-2"></i>Dirección
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#iva">
+                                            <i class="fas fa-file-invoice-dollar mr-2"></i>Impuestos y Valores
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-toggle="tab" href="#imagen">
+                                            <i class="fas fa-image mr-2"></i>Imagen
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content mt-3">
+                                
+                                    <!-- Pestaña de notificaciones -->
+                                    <div id="notificaciones" class="tab-pane container active">
+                                        <h6 class="m-0 font-weight-bold text-dark h5">Configuración de Notificaciones</h6>
+                                        <div class="card border mb-3 mt-2">
+                                            <div class="card-body">
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.notificar_a | as_crispy_field }}
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input" id="{{ form.activar_notif_stock.id_for_label }}" name="{{ form.activar_notif_stock.html_name }}" {% if form.activar_notif_stock.value %}checked{% endif %}>
+                                                        <label class="custom-control-label" for="{{ form.activar_notif_stock.id_for_label }}">{{ form.activar_notif_stock.label }}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.stock_minimo_general | as_crispy_field }}
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.stock_maximo_general | as_crispy_field }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input" id="{{ form.activar_notif_por_vencer.id_for_label }}" name="{{ form.activar_notif_por_vencer.html_name }}" {% if form.activar_notif_por_vencer.value %}checked{% endif %}>
+                                                        <label class="custom-control-label" for="{{ form.activar_notif_por_vencer.id_for_label }}">{{ form.activar_notif_por_vencer.label }}</label>
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.dias_por_vencer_general | as_crispy_field }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pestaña de detalles -->
+                                    <div id="detalles" class="tab-pane container">
+                                        <h6 class="m-0 font-weight-bold text-dark h5">Configuración de los datos de la Empresa</h6>
+                                        <div class="card border mb-3 mt-2">
+                                            <div class="card-body">
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.RUC | as_crispy_field }}
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.nombrecomercial | as_crispy_field }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-8">
+                                                        {{ form.razonsocial | as_crispy_field }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-8">
+                                                        {{ form.correo_empresa | as_crispy_field }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.cedularepresentantelegal | as_crispy_field }}
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.nombrerepresentantelegal | as_crispy_field }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.telefono_empresa | as_crispy_field }}
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.celular_empresa | as_crispy_field }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pestaña de dirección -->
+                                    <div id="direccion" class="tab-pane container">
+                                        <h6 class="m-0 font-weight-bold text-dark h5">Configuración de la Dirección de la Empresa</h6>
+                                        <div class="card border mb-3 mt-2">
+                                            <div class="card-body">
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.idprovincia | as_crispy_field }}
+                                                    </div>
+                                                    <div class="form-group col-md-4">
+                                                        {{ form.idciudad | as_crispy_field }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-8">
+                                                        {{ form.direccion1 | as_crispy_field }}
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="form-group col-md-8">
+                                                        {{ form.direccion2 | as_crispy_field }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Pestaña de impuestos y valores -->
+                                    <div id="iva" class="tab-pane container">
+                                        <h6 class="m-0 font-weight-bold text-dark h5">Configuración de los impuestos y valores</h6>
+                                        <div class="card border mb-3 mt-2">
+                                            <div class="card-body">
+                                                {% for form in formset %}
+                                                    <div class="form-row">
+                                                        <div class="form-group col-md-3">
+                                                            {{ form.idgiva.as_hidden }}
+                                                            {{ form.valoriva | as_crispy_field }}
+                                                        </div>
+                                                        <div class="form-group col-md-4">
+                                                            {{ form.descripcion_giva | as_crispy_field }}
+                                                        </div>
+                                                    </div>
+                                                    <hr class="mt-2 mb-3">
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>          
+
+                                    <!-- Pestaña de imagen (rediseñada) -->
+                                    <div id="imagen" class="tab-pane container">
+                                        <h6 class="m-0 font-weight-bold text-dark h5">Configuración de la Imagen Corporativa de la Empresa</h6>
+                                        <div class="row mt-2">
+                                            <div class="col-md-6">
+                                                <div class="image-upload-container text-center p-4 border rounded bg-light">
+                                                    {% if empresa.logo %}
+                                                        <!-- Vista previa de la imagen existente -->
+                                                        <img id="imagenPreview" 
+                                                            src="{{ empresa.logo.url }}" 
+                                                            alt="{{ empresa.nombrecomercial }}" 
+                                                            class="img-fluid rounded mb-3 shadow-sm" 
+                                                            style="max-width: 100%; max-height: 200px; object-fit: contain; border: 1px solid #dee2e6; padding: 5px;">
+                                                    {% else %}
+                                                        <!-- Placeholder cuando no hay imagen -->
+                                                        <div class="p-4 mb-3 text-center" style="border: 2px dashed #ced4da; border-radius: 5px;">
+                                                            <i class="fas fa-building fa-4x text-muted mb-3"></i>
+                                                            <p class="text-muted">No hay logo registrado</p>
+                                                        </div>
+                                                    {% endif %}
+                                                    
+                                                    <!-- Campo de subida de archivo con estilo mejorado -->
+                                                    <div class="custom-file">
+                                                        {{ form.logo }}
+                                                    </div>
+                                                    
+                                                    <!-- Texto de ayuda -->
+                                                    <small class="text-muted mt-2 d-block">
+                                                        Formatos soportados: JPG, PNG (Máx. 4MB).
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                        
+                                <div class="d-flex justify-content-start flex-wrap mt-3">
+                                    <button type="button" class="btn btn-sm btn-primary mb-2" id="botonModificar">
+                                        <i class="fas fa-save"></i> Guardar
+                                    </button>
+                                    <button type="reset" class="btn btn-sm btn-warning ml-2 mb-2" id="botonReset">
+                                        <i class="fas fa-undo"></i> Deshacer
+                                    </button>   
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- SweetAlert para confirmar la modificación -->
+    <script>
+        document.getElementById('botonModificar').addEventListener('click', function () {
+            Swal.fire({
+                title: "Confirmar cambios en la configuración",
+                text: "Los cambios realizados afectarán la configuración global del sistema",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#4169E1"
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    // Si el usuario confirma, enviar el formulario
+                    document.getElementById('miFormulario').submit();
+                }
+            });
+        });
+    </script>
+
+    <!-- Manejar cambio de seleccion de ciudad -->
+    <script>
+        $(document).ready(function () {
+            $('#id_idprovincia').change(function () {
+                var provinciaId = $(this).val();
+                $.ajax({
+                    type: "GET",
+                    url: `/empresa/ciudades_por_provincia/${provinciaId}/`,
+                    dataType: 'json',
+                    success: function (data) {
+                        var ciudadDropdown = $('#id_idciudad');
+                        ciudadDropdown.empty();
+                        ciudadDropdown.append('<option value="">Seleccione una ciudad</option>');
+                        $.each(data.ciudades, function (key, value) {
+                            ciudadDropdown.append('<option value="' + value.pk + '">' + value.nombre_ciudad + '</option>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
+    <!-- Manejar activación/desactivación notificaciones -->
+    <script>
+        // Función para manejar la activación/desactivación de campos relacionados con stock
+        function manejarCamposStock() {
+            const notifStock = document.getElementById('{{ form.activar_notif_stock.id_for_label }}');
+            const stockMin = document.getElementById('div_id_stock_minimo_general');
+            const stockMax = document.getElementById('div_id_stock_maximo_general');
+            const inputStockMin = document.getElementById('id_stock_minimo_general');
+            const inputStockMax = document.getElementById('id_stock_maximo_general');
+
+            function actualizarCamposStock() {
+                if (notifStock.checked) {
+                    stockMin.style.display = 'block';
+                    stockMax.style.display = 'block';
+                } else {
+                    stockMin.style.display = 'none';
+                    stockMax.style.display = 'none';
+                    inputStockMin.value = '';
+                    inputStockMax.value = '';
+                }
+            }
+
+            // Ejecutar al cargar y cuando cambie el estado
+            actualizarCamposStock();
+            notifStock.addEventListener('change', actualizarCamposStock);
+        }
+
+        // Función para manejar la activación/desactivación de campos relacionados con vencimiento
+        function manejarCamposVencimiento() {
+            const notifVencer = document.getElementById('{{ form.activar_notif_por_vencer.id_for_label }}');
+            const diasVencer = document.getElementById('div_id_dias_por_vencer_general');
+            const inputDiasVencer = document.getElementById('id_dias_por_vencer_general');
+
+            function actualizarCamposVencimiento() {
+                if (notifVencer.checked) {
+                    diasVencer.style.display = 'block';
+                } else {
+                    diasVencer.style.display = 'none';
+                    inputDiasVencer.value = '';
+                }
+            }
+
+            // Ejecutar al cargar y cuando cambie el estado
+            actualizarCamposVencimiento();
+            notifVencer.addEventListener('change', actualizarCamposVencimiento);
+        }
+
+        // evento de reset click
+        document.getElementById('botonReset').addEventListener('click', function () {
+            // Forzar el reset del formulario primero
+            this.form.reset();
+            manejarCamposStock();
+            manejarCamposVencimiento();
+        });
+        
+        manejarCamposStock();
+        manejarCamposVencimiento();
+    </script>
+
+    <!-- Manejar bloqueo del primer campo iva -->
+    <script>
+        const inputValoriva = document.getElementById('id_form-0-valoriva');
+        inputValoriva.readOnly = true;
+        inputValoriva.style.cursor = 'not-allowed';
+    </script>
+
+    <!-- Mejorar diseño campo seleccion archivo -->
+    <script src="{% static 'js/components/campo_file.js' %}"></script>
+{% endblock script %}

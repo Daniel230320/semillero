@@ -1,0 +1,109 @@
+{% load static %}
+<!-- Topbar -->
+<nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+    <!-- Sidebar Toggle (Topbar) -->
+    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+        <i class="fa fa-bars"></i>
+    </button>
+
+    <!-- Topbar Navbar -->
+    <ul class="navbar-nav ml-auto">
+
+        <!-- Nav Item - Notifications -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i id="campanita" class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Alerts -->
+                <span class="badge badge-danger badge-counter">{{ total_notificaciones }}</span>
+            </a>
+
+            <!-- Dropdown - Alerts -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header font-weight-bold d-flex justify-content-between align-items-center" style="font-size: 0.7rem; text-transform: none;">
+                    Notificaciones
+                    <div class="d-flex">
+                        <a href="{% url 'notificaciones:notifications' %}" class="text-white mr-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Historial de notificaciones" style="font-size: 12px;">
+                            <i class="fas fa-history fa-lg"></i>
+                        </a>
+                        {% if notificaciones_base %}
+                            <a href="{% url 'notificaciones:notifications_mark_as_read' %}" class="text-white mr-2" data-bs-toggle="tooltip" data-bs-placement="top" title="Marcar todas como leídas" style="font-size: 13px;">
+                                <i class="fas fa-check-square fa-lg"></i>
+                            </a>
+                            <a href="{% url 'notificaciones:notifications_delete_all' %}" class="text-white" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar todas" style="font-size: 12px;">
+                                <i class="fas fa-trash-alt fa-lg"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </h6>
+                <div class="overflow-auto" style="max-height: 450px;">
+                    {% if notificaciones_base %}
+                        {% for noti in notificaciones_base %}
+                            <a href="javascript:void(0);" id="notificacion" class="dropdown-item d-flex align-items-center" onclick="abrir_modal_notificacion('{% url 'notificaciones:detalle_notificacion' noti.pk %}')">
+                                <div class="mr-3">
+                                    {% if noti.idnotification.idlevel_id == 1 %}
+                                    <div class="icon-circle bg-info">
+                                        <i class="fas fa-info-circle text-white"></i>
+                                    </div>
+                                    {% elif noti.idnotification.idlevel_id == 2 %}
+                                    <div class="icon-circle bg-warning">
+                                        <i class="fas fa-exclamation-triangle text-white"></i>
+                                    </div>
+                                    {% elif noti.idnotification.idlevel_id == 3 %}
+                                    <div class="icon-circle bg-danger">
+                                        <i class="fas fa-times-circle text-white"></i>
+                                    </div>
+                                    {% elif noti.idnotification.idlevel_id == 4 %}
+                                    <div class="icon-circle bg-success">
+                                        <i class="fas fa-check-circle text-white"></i>
+                                    </div>
+                                    {% else %}
+                                    <div class="icon-circle bg-danger">
+                                        <i class="fas fa-exclamation-triangle text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div class="small text-gray-700">Hace, {{ noti.elapsed_time }}</div>
+                                    <div class="small text-gray-900 font-weight-bold">{{ noti.target_object }}:</div>
+                                    <div class="small text-gray-900 font-weight-bold">{{ noti.idnotification.description }}.
+                                    </div>
+                                </div>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <a class="dropdown-item text-center small text-gray-700 font-weight-bold"
+                    href="{% url 'notificaciones:notifications' %}">Ver todas las Notificaciones</a>
+            </div>
+        </li>
+
+        <div class="topbar-divider d-none d-sm-block"></div>
+
+        <!-- Nav Item - User Information -->
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ request.user.username }}</span>
+                <img class="img-profile rounded-circle" src="{% static 'img/undraw_profile.svg' %}">
+            </a>
+            <!-- Dropdown - User Information -->
+            <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="{% url 'usuarios:cuenta_perfil' %}">
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Perfil
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                    Salir
+                </a>
+            </div>
+        </li>
+
+    </ul>
+
+</nav>
+<!-- End of Topbar -->

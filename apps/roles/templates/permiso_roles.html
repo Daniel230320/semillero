@@ -1,0 +1,235 @@
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light">
+            <h5 class="modal-title text-dark font-weight-bold">
+                <i class="fas fa-key text-primary mr-2"></i>Control de Acceso
+            </h5>
+            <button class="close" type="button" data-dismiss="modal" area-label="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% load crispy_forms_tags %}
+            <form method="POST" action="{% url 'roles:permiso_roles' pk %}">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                
+                <!-- Sección de permisos organizados en columnas -->
+                <div class="form-group">
+                    <div class="row">
+                        <!-- Columna de permisos "Ver" -->
+                        <div class="col-md-4 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="custom-control custom-switch mr-1">
+                                    <input type="checkbox" class="custom-control-input" id="checkAllVer">
+                                    <label class="custom-control-label" for="checkAllVer">
+                                        <h5 class="h6 font-weight-bold text-dark"><i class="fas fa-sm fa-eye mr-1"></i>Ver</h5>
+                                    </label>
+                                </div>
+                            </div>
+                            {% for checkbox in form.permissions %}
+                                {% if 'ver' in checkbox.choice_label|lower %}
+                                    <div class="custom-control custom-switch">
+                                        {{ checkbox.tag }}
+                                        <label class="custom-control-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Columna de permisos "Crear" -->
+                        <div class="col-md-4 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="custom-control custom-switch mr-1">
+                                    <input type="checkbox" class="custom-control-input" id="checkAllCrear">
+                                    <label class="custom-control-label" for="checkAllCrear">
+                                        <h5 class="h6 font-weight-bold text-dark"><i class="fas fa-sm fa-plus-circle mr-1"></i>Crear</h5>
+                                    </label>
+                                </div>
+                            </div>
+                            {% for checkbox in form.permissions %}
+                                {% if 'crear' in checkbox.choice_label|lower %}
+                                    <div class="custom-control custom-switch">
+                                        {{ checkbox.tag }}
+                                        <label class="custom-control-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Columna de permisos "Editar" -->
+                        <div class="col-md-4 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="custom-control custom-switch mr-1">
+                                    <input type="checkbox" class="custom-control-input" id="checkAllEditar">
+                                    <label class="custom-control-label" for="checkAllEditar">
+                                        <h5 class="h6 font-weight-bold text-dark"><i class="fas fa-sm fa-edit mr-1"></i>Editar</h5>
+                                    </label>
+                                </div>
+                            </div>
+                            {% for checkbox in form.permissions %}
+                                {% if 'editar' in checkbox.choice_label|lower %}
+                                    <div class="custom-control custom-switch">
+                                        {{ checkbox.tag }}
+                                        <label class="custom-control-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Columna de permisos "Eliminar" -->
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="custom-control custom-switch mr-1">
+                                    <input type="checkbox" class="custom-control-input" id="checkAllEliminar">
+                                    <label class="custom-control-label" for="checkAllEliminar">
+                                        <h5 class="h6 font-weight-bold text-dark"><i class="fas fa-sm fa-trash-alt mr-1"></i>Eliminar</h5>
+                                    </label>
+                                </div>
+                            </div>
+                            {% for checkbox in form.permissions %}
+                                {% if 'eliminar' in checkbox.choice_label|lower %}
+                                    <div class="custom-control custom-switch">
+                                        {{ checkbox.tag }}
+                                        <label class="custom-control-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <!-- Columna de permisos "Otros" -->
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center">
+                                <div class="custom-control custom-switch mr-1">
+                                    <input type="checkbox" class="custom-control-input" id="checkAllOtros">
+                                    <label class="custom-control-label" for="checkAllOtros">
+                                        <h5 class="h6 font-weight-bold text-dark"><i class="fas fa-sm fa-cogs mr-1"></i>Otros</h5>
+                                    </label>
+                                </div>
+                            </div>
+                            {% for checkbox in form.permissions %}
+                                {% if 'asignar' in checkbox.choice_label|lower or 'generar' in checkbox.choice_label|lower or 'config' in checkbox.choice_label|lower %}
+                                    <div class="custom-control custom-switch">
+                                        {{ checkbox.tag }}
+                                        <label class="custom-control-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botones -->
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-primary" id="botonModificar">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button type="reset" class="btn btn-sm btn-warning ml-2">
+                        <i class="fas fa-undo"></i> Deshacer
+                    </button>  
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Seleccionar todas -->
+<script>
+    $(document).ready(function() {
+        const divs = document.querySelectorAll('.custom-switch');
+        let allCheckedver = true;
+        let allCheckedcrear = true;
+        let allCheckededitar = true;
+        let allCheckedeliminar = true;
+        let allCheckedotros = true;
+
+        divs.forEach(div => {
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('ver ')) {
+                console.log(div.querySelector('.custom-control-label'));
+                if (!div.querySelector('input[type="checkbox"]').checked) {
+                    allCheckedver = false;
+                }
+            }
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('crear ')) {
+                if (!div.querySelector('input[type="checkbox"]').checked) {
+                    allCheckedcrear = false;
+                }
+            }
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('editar ')) {
+                if (!div.querySelector('input[type="checkbox"]').checked) {
+                    allCheckededitar = false;
+                }
+            }
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('eliminar ')) {
+                if (!div.querySelector('input[type="checkbox"]').checked) {
+                    allCheckedeliminar = false;
+                }
+            }
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('asignar ') || 
+                div.querySelector('.custom-control-label').textContent.toLowerCase().includes('generar ') ||
+                div.querySelector('.custom-control-label').textContent.toLowerCase().includes('config')) {
+                if (!div.querySelector('input[type="checkbox"]').checked) {
+                    allCheckedotros = false;
+                }
+            }
+        });
+        if (allCheckedver) {
+            document.getElementById('checkAllVer').checked = true;
+        }
+        if (allCheckedcrear) {
+            document.getElementById('checkAllCrear').checked = true;
+        }
+        if (allCheckededitar) {
+            document.getElementById('checkAllEditar').checked = true;
+        }
+        if (allCheckedeliminar) {
+            document.getElementById('checkAllEliminar').checked = true;
+        }
+        if (allCheckedotros) {
+            document.getElementById('checkAllOtros').checked = true;
+        }
+    });
+    
+    document.getElementById('checkAllVer').addEventListener('change', function() {
+        const divs = document.querySelectorAll('.custom-switch');
+        divs.forEach(div => {
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('ver ')) {
+                div.querySelector('input[type="checkbox"]').checked = this.checked;
+            }
+        });
+    });
+    document.getElementById('checkAllCrear').addEventListener('change', function() {
+        const divs = document.querySelectorAll('.custom-switch');
+        divs.forEach(div => {
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('crear ')) {
+                div.querySelector('input[type="checkbox"]').checked = this.checked;
+            }
+        });
+    });
+    document.getElementById('checkAllEditar').addEventListener('change', function() {
+        const divs = document.querySelectorAll('.custom-switch');
+        divs.forEach(div => {
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('editar ')) {
+                div.querySelector('input[type="checkbox"]').checked = this.checked;
+            }
+        });
+    });
+    document.getElementById('checkAllEliminar').addEventListener('change', function() {
+        const divs = document.querySelectorAll('.custom-switch');
+        divs.forEach(div => {
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('eliminar ')) {
+                div.querySelector('input[type="checkbox"]').checked = this.checked;
+            }
+        });
+    });
+    document.getElementById('checkAllOtros').addEventListener('change', function() {
+        const divs = document.querySelectorAll('.custom-switch');
+        divs.forEach(div => {
+            if (div.querySelector('.custom-control-label').textContent.toLowerCase().includes('asignar ') || 
+            div.querySelector('.custom-control-label').textContent.toLowerCase().includes('generar ') ||
+            div.querySelector('.custom-control-label').textContent.toLowerCase().includes('config')) {
+                div.querySelector('input[type="checkbox"]').checked = this.checked;
+            }
+        });
+    });
+</script>

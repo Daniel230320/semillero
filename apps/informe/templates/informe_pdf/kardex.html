@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de KARDEX</title>
+    <style type="text/css">
+        @page {
+            size: A4;
+            margin: 1.2cm;
+            @top-center {
+                content: none;
+            }
+            @bottom-center {
+                content: "Página " counter(page) " de " counter(pages);
+                font-size: 12px;
+                color: #777;
+            }
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 9pt;
+            color: #333;
+            line-height: 1.3;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .company-info {
+            flex: 2;
+        }
+
+        .company-info h2 {
+            margin: 0 0 0.2rem 0;
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .company-info p {
+            margin: 0.05rem 0;
+            font-size: 0.7rem;
+            color: #555;
+        }
+
+        .report-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        .logo {
+            height: 50px;
+            margin-bottom: 0.3rem;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 0.8rem 0 1rem 0;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            font-weight: bold;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #34495e;
+        }
+
+        .filters {
+            margin-bottom: 0.8rem;
+            padding: 0.5rem;
+            background-color: #f1f4f8;
+            border-left: 4px solid #34495e;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .filters span {
+            margin-right: 1rem;
+            display: inline-block;
+        }
+
+        .report-info .logo {
+            width: 80px;           /* Aumentar el tamaño del logo */
+            height: auto;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+            background-color: #fff;
+            box-shadow: 0 0 3px rgba(0,0,0,0.05);
+        }
+
+        th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 0.4rem;
+            text-align: center;
+            font-weight: 600;
+            border-bottom: 2px solid #1a252f;
+        }
+
+        td {
+            padding: 0.3rem 0.4rem;
+            border: 1px solid #ddd;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        tr:nth-child(even):not(.total-row) {
+            background-color: #f9f9f9;
+        }
+
+        .total-row {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 0.8rem;
+            font-style: italic;
+            color: #777;
+            font-size: 0.85rem;
+        }
+
+        .number {
+            text-align: right;
+            padding-right: 0.8rem;
+        }
+
+        .currency::before {
+            content: "$";
+            margin-right: 2px;
+            font-size: 0.8rem;
+        }
+
+        /* Estilos específicos para la tabla de información del producto */
+        table.info-producto {
+            margin-bottom: 0.8rem;
+        }
+
+        table.info-producto th,
+        table.info-producto td {
+            padding: 0.3rem 0.4rem;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        table.info-producto th {
+            background-color: #2c3e50;
+            color: white;
+            font-weight: 600;
+        }
+
+        table.info-producto td {
+            background-color: #f9f9f9;
+        }
+
+        .filters {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background-color: #f1f4f8;
+            border-left: 4px solid #34495e;
+            border-top: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .filters p {
+            margin: 0;
+            flex: 1 1 100%;
+        }
+
+        .filters span {
+            margin-right: 2rem;
+            display: inline-block;
+        }
+
+        /* Estilos para la tabla kardex */
+        table.kardex {
+            border: 1px solid #ddd;
+        }
+
+        table.kardex th, table.kardex td {
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="company-info">
+            <h2>{{ empresa.nombrecomercial }}</h2>
+            <p><strong>Razón Social:</strong> {{ empresa.razonsocial }}</p>
+            <p><strong>RUC:</strong> {{ empresa.RUC }}</p>
+            <p><strong>Teléfono:</strong> {{ empresa.telefono_empresa }}</p>
+            <p><strong>Email:</strong> {{ empresa.correo_empresa }}</p>
+        </div>
+        <div class="report-info">
+            {% if logo_url %}
+                <img class="logo" src="{{ logo_url }}" alt="Logo de la empresa">
+            {% endif %}
+            <p><strong>Generado el:</strong> {{ now }}</p>
+        </div>
+    </div>
+
+    <h1 class="report-title">REPORTE DE KARDEX DE PRODUCTO</h1>
+
+    <div class="filters">
+        <p>
+            <span><strong>Desde:</strong> {% if fecha_kardex_desde %}{{ fecha_kardex_desde | date:"d/m/Y" }}{% else %}No especificado{% endif %}</span>
+            <span><strong>Hasta:</strong> {% if fecha_kardex_hasta %}{{ fecha_kardex_hasta | date:"d/m/Y" }}{% else %}No especificado{% endif %}</span>
+        </p>
+    </div>
+    
+    <table class="info-producto">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <td>{{ articulo_obj.codigoarticulo }}</td>
+                <th>Producto</th>
+                <td>{{ articulo_obj.descripcion_articulo }}</td>
+                <th>Método</th>
+                <td>
+                    {% if metodo == 'peps' %}
+                        PEPS
+                    {% else %}
+                        Promedio Ponderado
+                    {% endif %}
+                </td>
+            </tr>
+        </thead>
+    </table>
+
+    <table class="kardex">
+        <thead>
+            <tr>
+                <th rowspan="2">Fecha</th>
+                <th rowspan="2">Detalle</th>
+                <th colspan="3">Entradas</th>
+                <th colspan="3">Salidas</th>
+                <th colspan="3">Existencias</th>
+            </tr>
+            <tr>
+                <th>C</th>
+                <th>C./U</th>
+                <th>C./T</th>
+                <th>C</th>
+                <th>C./U</th>
+                <th>C./T</th>
+                <th>C</th>
+                <th>C./U</th>
+                <th>C./T</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if kardex %}
+                {% for kar in kardex %}
+                    <tr>
+                        <td>{{ kar.fecha | date:"d/m/Y" }}</td>
+                        <td>{{ kar.detalle }}</td>
+                        <td>{{ kar.entradas }}</td>
+                        <td class="number currency">{{ kar.vr_unitario_entradas|floatformat:2 }}</td>
+                        <td class="number currency">{{ kar.vr_total_entradas|floatformat:2 }}</td>
+                        <td>{{ kar.salidas }}</td>
+                        <td class="number currency">{{ kar.vr_unitario_salidas|floatformat:2 }}</td>
+                        <td class="number currency">{{ kar.vr_total_salidas|floatformat:2 }}</td>
+                        <td>{{ kar.saldos }}</td>
+                        <td class="number currency">{{ kar.vr_unitario_saldos|floatformat:2 }}</td>
+                        <td class="number currency">{{ kar.total|floatformat:2 }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="11" class="no-results">No se encontraron resultados</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>

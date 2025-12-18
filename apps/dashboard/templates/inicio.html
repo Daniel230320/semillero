@@ -1,0 +1,608 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Sistema Inventario Inicio{% endblock titulo %}
+
+{% block contenido %}
+<!-- Page Heading -->
+<div class="mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Panel de Control</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Panel de Control</li>
+        </ol>
+    </nav>
+</div>
+
+
+<!-- Content Row -->
+<div class="row">
+
+    <!-- Card total clientes -->
+    {% comment %} <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Clientes</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_clientes}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Card total proveedores -->
+    {% comment %} <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Proveedores</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{total_proveedores}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Card total productos -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Productos</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_articulos }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-cubes fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card total compras -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Compras
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_compras }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-shopping-cart fa-2x text-gray-300"></i> <!-- Icono de compras aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card total ventas -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Ventas
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_ventas }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i> <!-- Icono de ventas aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card total usuarios -->
+    {% comment %} <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-secondary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-secondary text-uppercase mb-1">
+                            Usuarios
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_usuarios }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i> <!-- Icono de usuarios aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Card existencia total -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-dark shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
+                            Existencia Total
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_existencia_total }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-warehouse fa-2x text-gray-300"></i> <!-- Icono de existencia total aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card existencia actual -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Existencia Actual
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_existencia_actual }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-box fa-2x text-gray-300"></i> <!-- Icono de existencia actual aquí -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card existencia vendida -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Existencia Vendida
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">{{ total_existencia_vendida }}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-truck fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card ventas mensual -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Ventas (Mes Actual)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ganancias_m}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card ventas anual -->
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Ventas (Año Actual)</div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">$ {{ganancias_anual}}</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area Chart resumen ventas -->
+    <div class="col-xl-12 col-lg-7">
+        <div class="card shadow mb-4 card-csslist">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-chart-line mr-2"></i>Resumen de Ventas (Año Actual)</h6>
+                <div class="d-flex align-items-center">
+                    <i id="exportBtnArea" class="fas fa-image expand-icon mr-2" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar Imagen"></i>
+                    <i class="fas fa-expand-arrows-alt expand-icon" style="cursor: pointer;" onclick="toggleFullscreen(this)" data-bs-toggle="tooltip" data-bs-placement="top" title="Pantalla Completa"></i>
+                </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="chart-area">
+                    <canvas id="AreaChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area Ultimas 10 ventas -->
+    <div class="col-xl-6 col-lg-7">
+        <div class="card shadow mb-4 card-csslist">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-cart-arrow-down mr-2"></i>Últimas 10 Ventas</h6>
+                <i class="fas fa-expand-arrows-alt expand-icon" style="cursor: pointer;" onclick="toggleFullscreen(this)" data-bs-toggle="tooltip" data-bs-placement="top" title="Pantalla Completa"></i>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Cliente</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Subtotal</th>
+                                <th scope="col">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ul in ultima10_ventas %}
+                            <tr>
+                                <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                                <td><a href="{% url 'ventas:listado_ventas' %}" class="text-primary">{{ ul.idcliente }}</a></td>
+                                <td>{{ ul.fecha_venta | date:"d/m/Y" }}</td>
+                                <td>$ {{ ul.subtotal }}</td>
+                                <td>$ {{ ul.total }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Area Productos Vendidos -->
+    {% comment %} <div class="col-xl-6 col-lg-7">
+        <div class="card shadow mb-4 card-csslist">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-box-open mr-2"></i>Productos más Vendidos (Año Actual)</h6>
+                <i class="fas fa-expand-arrows-alt expand-icon" style="cursor: pointer;" onclick="toggleFullscreen(this)"></i>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <table class="table table-borderless datatable">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Producto</th>
+                            <th scope="col">Precio</th>
+                            <th scope="col">Vendido</th>
+                            <th scope="col">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for art_ven in articulos_vendidos %}
+                        <tr>
+                            <th scope="row"><a href="#">{{ forloop.counter }}</a></th>
+                            <td><a href="{% url 'ventas:listado_ventas' %}" class="text-primary">{{ art_ven.codigoarticulo__descripcion_articulo }}</a></td>
+                            <td>$ {{ art_ven.preciounitario }}</td>
+                            <td>{{ art_ven.cantidad_vendida }}</td>
+                            <td>$ {{ art_ven.total_vendido }}</td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <!-- Gráfica de pastel para productos más vendidos -->
+    <div class="col-xl-6 col-lg-7">
+        <div class="card shadow mb-4 card-csslist">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-chart-pie mr-2"></i>Productos más Vendidos (Año Actual)</h6>
+                <div class="d-flex align-items-center">
+                    <i id="exportBtnPie" class="fas fa-image expand-icon mr-2" style="cursor: pointer;" data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar Imagen"></i>
+                    <i class="fas fa-expand-arrows-alt expand-icon" style="cursor: pointer;" onclick="toggleFullscreen(this)" data-bs-toggle="tooltip" data-bs-placement="top" title="Pantalla Completa"></i>
+                </div>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body">
+                <div class="chart-pie pt-4 pb-2">
+                    <canvas id="PieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- Script Area Chart resumen ventas -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var ctx = document.getElementById("AreaChart").getContext('2d');
+            var ganancias_mensuales = JSON.parse('{{ resumen_ganancias|escapejs }}');
+            var meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            var myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: meses,
+                    datasets: [{
+                        label: "Ganancias Mensuales",
+                        lineTension: 0.3,
+                        backgroundColor: "rgba(78, 115, 223, 0.05)",
+                        borderColor: "rgba(78, 115, 223, 1)",
+                        pointRadius: 3,
+                        pointBackgroundColor: "rgba(78, 115, 223, 1)",
+                        pointBorderColor: "rgba(78, 115, 223, 1)",
+                        pointHoverRadius: 3,
+                        pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
+                        pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+                        pointHitRadius: 10,
+                        pointBorderWidth: 2,
+                        data: ganancias_mensuales,
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            left: 10,
+                            right: 25,
+                            top: 25,
+                            bottom: 0
+                        }
+                    },
+                    scales: {
+                        xAxes: [{
+                            time: {
+                                unit: 'date'
+                            },
+                            gridLines: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                maxTicksLimit: 12
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                maxTicksLimit: 5,
+                                padding: 10,
+                                callback: function (value, index, values) {
+                                    return '$' + number_format(value);
+                                }
+                            },
+                            gridLines: {
+                                color: "rgb(234, 236, 244)",
+                                zeroLineColor: "rgb(234, 236, 244)",
+                                drawBorder: false,
+                                borderDash: [2],
+                                zeroLineBorderDash: [2]
+                            }
+                        }],
+                    },
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        titleMarginBottom: 10,
+                        titleFontColor: '#6e707e',
+                        titleFontSize: 14,
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem, chart) {
+                                var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
+                                return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+                            }
+                        }
+                    }
+                }
+            });
+            // Exportar la gráfica a imagen
+            document.getElementById('exportBtnArea').addEventListener('click', function () {
+                // Obtener la imagen en base64
+                var image = myLineChart.toBase64Image();
+                var link = document.createElement('a');
+                link.href = image;
+                link.download = 'grafica.png'; // Nombre del archivo
+                link.click();
+            });
+
+        });
+    </script>
+
+    <!-- Script Gráfica de pastel para productos más vendidos -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Datos de productos vendidos
+            var productosVendidos = JSON.parse('{{ articulos_vendidos|escapejs }}');
+
+            // Extraer nombres, cantidades y totales vendidos
+            var nombresProductos = productosVendidos.map(function (producto) {
+                return producto.descripcion;
+            });
+
+            var cantidadesVendidas = productosVendidos.map(function (producto) {
+                return producto.cantidad_vendida;
+            });
+
+            var totalesVendidos = productosVendidos.map(function (producto) {
+                return producto.total_vendido;
+            });
+
+            // Calcular el total general vendido
+            var totalGeneral = cantidadesVendidas.reduce((a, b) => a + b, 0);
+
+            // Calcular porcentajes
+            var porcentajes = cantidadesVendidas.map(function (cantidad) {
+                return ((cantidad / totalGeneral) * 100).toFixed(2) + '%';
+            });
+
+            // Colores para la gráfica
+            var colores = [
+                '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+                '#5a5c69', '#858796', '#3a3b45', '#f8f9fc', '#dddfeb'
+            ];
+
+            // Configurar la gráfica de pastel
+            var ctx = document.getElementById("PieChart").getContext('2d');
+            var myPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: nombresProductos,
+                    datasets: [{
+                        data: cantidadesVendidas,
+                        backgroundColor: colores,
+                        hoverBackgroundColor: colores,
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }],
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index] || '';
+                                var cantidad = data.datasets[0].data[tooltipItem.index] || 0;
+                                var totalVendido = totalesVendidos[tooltipItem.index] || 0;
+                                return `${label}: ${cantidad} unidades | Total: $${totalVendido.toFixed(2)}`;
+                            }
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            fontColor: '#858796',
+                            padding: 10,
+                            boxWidth: 15,
+                            // Mostrar porcentajes en la leyenda
+                            generateLabels: function (chart) {
+                                var data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map(function (label, i) {
+                                        var meta = chart.getDatasetMeta(0);
+                                        var ds = data.datasets[0];
+                                        var arc = meta.data[i];
+                                        var custom = arc && arc.custom || {};
+                                        var value = ds.data[i];
+                                        var porcentaje = ((value / totalGeneral) * 100).toFixed(2) + '%';
+                                        return {
+                                            text: label + ' (' + porcentaje + ')',
+                                            fillStyle: ds.backgroundColor[i],
+                                            hidden: isNaN(ds.data[i]) || meta.data[i].hidden,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    cutoutPercentage: 0, // Cambia a 50 si quieres un donut chart
+                },
+            });
+            // Exportar la gráfica a imagen
+            document.getElementById('exportBtnPie').addEventListener('click', function () {
+                // Obtener la imagen en base64
+                var image = myPieChart.toBase64Image();
+                var link = document.createElement('a');
+                link.href = image;
+                link.download = 'grafica.png'; // Nombre del archivo
+                link.click();
+            });
+        });
+    </script>
+
+    <!-- Alternar cards en Pantalla completa -->
+    <script>
+        // Función para alternar la pantalla completa
+        function toggleFullscreen(icon) {
+            const card = icon.closest('.card'); // Obtiene la tarjeta más cercana al ícono
+
+            if (!document.fullscreenElement) {
+                // Si no está en pantalla completa, entra en pantalla completa
+                if (card.requestFullscreen) {
+                    card.requestFullscreen();
+                } else if (card.mozRequestFullScreen) { // Firefox
+                    card.mozRequestFullScreen();
+                } else if (card.webkitRequestFullscreen) { // Chrome, Safari y Opera
+                    card.webkitRequestFullscreen();
+                } else if (card.msRequestFullscreen) { // IE/Edge
+                    card.msRequestFullscreen();
+                }
+            } else {
+                // Si ya está en pantalla completa, sale de pantalla completa
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.mozCancelFullScreen) { // Firefox
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) { // Chrome, Safari y Opera
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { // IE/Edge
+                    document.msExitFullscreen();
+                }
+            }
+        }
+
+        // Escuchar el evento de cambio de pantalla completa
+        document.addEventListener('fullscreenchange', () => {
+            const icons = document.querySelectorAll('.expand-icon'); // Selecciona todos los íconos
+
+            icons.forEach(icon => {
+                if (!document.fullscreenElement) {
+                    // Si se sale de pantalla completa, cambiar el ícono a "expandir"
+                    icon.classList.remove('fa-compress-arrows-alt');
+                    icon.classList.add('fa-expand-arrows-alt');
+                } else {
+                    // Si se entra en pantalla completa, cambiar el ícono a "comprimir"
+                    icon.classList.remove('fa-expand-arrows-alt');
+                    icon.classList.add('fa-compress-arrows-alt');
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js"></script>
+{% endblock script %}

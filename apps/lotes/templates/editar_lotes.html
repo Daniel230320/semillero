@@ -1,0 +1,43 @@
+<div class="modal-dialog modal-custom-width" role="document">
+    <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light">
+            <h5 class="modal-title text-dark font-weight-bold">
+                <i class="fas fa-edit text-primary mr-2"></i>Editar Lote
+            </h5>
+            <button class="close" type="button" data-dismiss="modal" aria-label="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% load crispy_forms_tags %}
+            <form method="POST" action="{% url 'lotes:editar_lotes' lote.idlote %}" id="loteForm">
+                {% csrf_token %}
+                <!-- Mostrar el campo codigoarticulo como un campo de solo lectura -->
+                <div class="form-group col-md-12">
+                    <label for="codigoarticulo">Producto<span class="asteriskField">*</span></label>
+                    <input type="text" class="form-control" id="codigoarticulo" value="{{ lote.codigoarticulo }}" disabled style="cursor: not-allowed;">
+                </div>
+                <div class="form-group col-md-12">
+                    {{ form.numero_lote | as_crispy_field }}
+                </div>
+                <div class="form-group col-md-12">
+                    {{ form.fecha_fabricacion | as_crispy_field }}
+                </div>
+                <div class="form-group col-md-12">
+                    {{ form.fecha_caducidad | as_crispy_field }}
+                </div>
+                <div class="form-group col-md-12">
+                    {{ form.cantidad | as_crispy_field }}
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-sm btn-primary" id="botonModificar">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                    <button type="reset" class="btn btn-sm btn-warning ml-2">
+                        <i class="fas fa-undo"></i> Deshacer
+                    </button>  
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

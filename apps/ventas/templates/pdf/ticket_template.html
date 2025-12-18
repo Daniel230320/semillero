@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ticket de Venta</title>
+    <style>
+        @page {
+            size: 80mm 297mm;
+            margin: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 8px;
+            line-height: 1.1;
+            padding: 2mm;
+            margin: 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2mm;
+            padding-bottom: 1mm;
+            border-bottom: 1px dashed #000;
+        }
+        .logo {
+            max-width: 30mm;
+            max-height: 15mm;
+            margin-bottom: 1mm;
+            border-radius: 10px;
+        }
+        .company-name {
+            font-weight: bold;
+            font-size: 10px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+        .document-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 9px;
+            margin: 1mm 0;
+            text-transform: uppercase;
+        }
+        .sale-info {
+            margin-bottom: 2mm;
+            font-size: 7px;
+            margin-top: 2mm;
+            border-top: 1px dashed #000;
+            padding-top: 1mm;
+        }
+        .sale-info p {
+            margin: 0.5mm 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1mm 0;
+            font-size: 7px;
+        }
+        th {
+            border-bottom: 1px solid #000;
+            padding: 1mm;
+            text-align: left;
+        }
+        td {
+            padding: 1mm;
+            border-bottom: 1px dashed #ccc;
+        }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .footer {
+            margin-top: 2mm;
+            text-align: center;
+            font-size: 7px;
+            border-top: 1px dashed #000;
+            padding-top: 1mm;
+        }
+        .currency::before { content: "$"; }
+        .nutri-section {
+            margin-top: 2mm;
+            border-top: 1px dashed #000;
+            padding-top: 1mm;
+        }
+        .nutri-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 8px;
+        }
+        .nutri-table {
+            font-size: 6px;
+        }
+        .nivel-celda {
+            padding: 1mm;
+            border-radius: 2px;
+            font-size: 6px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .no-contiene { background-color: #3498db; color: white; }
+        .bajo { background-color: #2ecc71; color: white; }
+        .medio { background-color: #f1c40f; color: white; }
+        .alto { background-color: #e74c3c; color: white; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        {% if logo_url %}
+            <img class="logo" src="{{ logo_url }}" alt="Logo de la empresa">
+        {% endif %}
+        <div class="company-name">* {{ empresa.nombrecomercial }} *</div>
+        <div>{{ empresa.razonsocial }}</div>
+        <div class="company-name">DIRECCIÓN SUCURSAL:</div>
+        <div>{{ empresa.direccion1 }}</div>
+        <div class="company-name">MATRIZ:</div>
+        <div>{{ empresa.direccion2 }}</div>
+        <div>RUC: {{ empresa.RUC }}</div>
+    </div>
+
+    <div class="document-title">TICKET #{{ venta.idventa }}</div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cant</th>
+                <th>Descripción</th>
+                <th class="text-right">P.Unit</th>
+                <th class="text-right">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for det in venta_detalles %}
+                <tr>
+                    <td>{{ det.cantidad }}</td>
+                    <td>{{ det.codigoarticulo.descripcion_articulo|truncatechars:20 }}</td>
+                    <td class="text-right currency">{{ det.preciounitario|floatformat:2 }}</td>
+                    <td class="text-right currency">{{ det.valor|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot style="border-top: 1px solid black; margin-top: 5px;">
+            <tr>
+                <td colspan="3" class="text-right">Subtotal 0%:</td>
+                <td class="text-right currency">{{ venta.subtotal_tarifa0|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right">Subtotal 15%:</td>
+                <td class="text-right currency">{{ venta.subtotal_tarifa12|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right">Desc. Total:</td>
+                <td class="text-right currency">{{ venta.descuento|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right">Subtotal:</td>
+                <td class="text-right currency">{{ venta.subtotal|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right">IVA:</td>
+                <td class="text-right currency">{{ venta.valoriva|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right">TOTAL:</td>
+                <td class="text-right currency">{{ venta.total|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right">PAGO:</td>
+                <td class="text-right currency">{{ pago.monto|floatformat:2 }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right">CAMBIO:</td>
+                <td class="text-right currency">{{ cambio|floatformat:2 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Sección Nutricional Simplificada -->
+    <div class="nutri-section">
+        <div class="nutri-title">RESUMEN NUTRICIONAL</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>General</th>
+                    <th>Azúcar</th>
+                    <th>Grasa</th>
+                    <th>Sal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fila in distribucion_consolidada %}
+                    <tr>
+                        <td>{{ fila.indicador }}</td>
+                        <td>{{ fila.general }}</td>
+                        <td>{{ fila.azucar }}</td>
+                        <td>{{ fila.grasa }}</td>
+                        <td>{{ fila.sal }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Sección de Indicadores Nutricionales -->
+    <div class="nutri-section">
+        <div class="nutri-title">DETALLES NUTRICIONALES</div>
+        <table >
+            <thead>
+                <tr>
+                    <th rowspan="2">Nivel</th>
+                    <th colspan="2">Azúcar</th>
+                    <th colspan="2">Sal</th>
+                    <th colspan="2">Grasa</th>
+                    <th rowspan="2">Total</th>
+                </tr>
+                <tr>
+                    <th>Unidades</th>
+                    <th>%</th>
+                    <th>Unidades</th>
+                    <th>%</th>
+                    <th>Unidades</th>
+                    <th>%</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in indicadores_nutricionales.tabla %}
+                <tr class="{% if item.nivel == 'TOTAL' %}total-row{% endif %}">
+                    <td class="nivel-celda 
+                        {% if 'No' in item.nivel %}no-contiene
+                        {% elif 'Bajo' in item.nivel %}bajo
+                        {% elif 'Medio' in item.nivel %}medio
+                        {% elif 'Alto' in item.nivel %}alto{% endif %}">
+                        {{ item.nivel }}
+                    </td>
+                    <td>{{ item.azucar }}</td>
+                    <td>{{ item.azucar_porcentaje }}</td>
+                    <td>{{ item.sal }}</td>
+                    <td>{{ item.sal_porcentaje }}</td>
+                    <td>{{ item.grasa }}</td>
+                    <td>{{ item.grasa_porcentaje }}</td>
+                    <td>{{ item.total }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="sale-info">
+        <p><strong>Fecha:</strong> {{ fecha_display|date:"d/m/Y H:i" }}</p>
+        <p><strong>Cliente:</strong> {{ venta.idcliente.nombre_cliente|truncatechars:20 }}</p>
+        <p><strong>RUC/CI:</strong> {{ venta.idcliente.numerodocumento }}</p>
+        <p><strong>Dirección:</strong> {{ venta.idcliente.direccion_cliente }}</p>
+        <p><strong>Teléfono:</strong> {{ venta.idcliente.telefono_cliente }}</p>
+        <p><strong>Forma de Pago:</strong> Efectivo</p>
+        <p><strong>Atendido por:</strong> {% if venta.user.first_name %}{{ venta.user.first_name|first }}. {{ venta.user.last_name }}{% else %}{{ venta.user.username }}{% endif %}</p>
+    </div>
+
+    <div class="footer">
+         <div>****************************** ESTIMADO CLIENTE ******************************</div>
+            <div>Usted va a pagar en efectivo un total de <span class="currency">{{ pago.monto|floatformat:2 }}</span></div>
+            <div>Por lo tanto, debe recibir un cambio de <span class="currency">{{ cambio|floatformat:2 }}</span></div>
+        <div>Total productos: {{ total_cantidad }}</div>
+        <div>¡GRACIAS POR SU COMPRA!</div>
+    </div>
+</body>
+</html>

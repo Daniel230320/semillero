@@ -1,0 +1,1111 @@
+{% extends "inventario_principal/base.html" %}
+{% load static %}
+
+{% block titulo %}Registrar Compras{% endblock titulo %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Registrar Compras</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'compras:listado_compras' %}">Compras</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Registrar Compra</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-edit mr-2"></i>Registro de Compra</h6>
+        </div>
+        <div class="card-body">
+            <div class="card mx-auto border-1 shadow-sm" style="max-width: 70rem;">
+                <div class="card-body">
+                    <form method="POST" action="" id="compraForm">
+                        {% csrf_token %}
+                        <!-- Contenido para registrar ventas -->
+                        <!-- Concepto -->
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="comconcepto">Concepto</label>
+                                    <textarea class="form-control form-control-sm resizeable" style="width: 100%;" id="comconcepto" name="comconcepto"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <!-- Fecha de Emisión -->
+                                <div class="form-group">
+                                    <label for="fecha_entrada">Fecha de Entrada<span class="asteriskField">*</span></label>
+                                    <input type="date" class="form-control form-control-sm" id="fecha_entrada" name="fecha_entrada" style="cursor: not-allowed;" required readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Cliente -->
+                                <div class="form-group">
+                                    <label for="proveedor">Proveedor<span class="asteriskField">*</span></label>
+                                    <select class="form-control form-control-sm" id="proveedor" name="proveedor" required>
+                                        <option value="" disabled selected>Seleccionar proveedor</option>
+                                        {% for proveedor in lis_proveedores %}
+                                            <option value="{{ proveedor.idproveedor }}">{{ proveedor.nombre_proveedor }} / {{ proveedor.ruc_proveedor }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>                            
+                            </div>
+                        </div>
+
+                        <!-- Botón para listar productos y ventana modal -->
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <button type="button" class="btn btn-sm btn-success" data-toggle="modal" data-target="#com_modalListaProductos">
+                                    <i class="fas fa-list"></i> Listar Productos
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Lista de productos y detalles -->
+                        <div class="row">
+
+                            <!-- Detalles -->
+                            <div class="col">
+                                <div class="card mb-3 border-1 shadow-sm" style="width: 100%;">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="font-weight-bold"><i class="fas fa-truck mr-2"></i>Detalles de la compra</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                                            <table class="table table-bordered" id="com_detalleProductosTable" width="100%" cellspacing="0">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="col-3">Producto</th>
+                                                        <th class="col-1">Cantidad</th>
+                                                        <th class="col-1">P./Unitario</th>
+                                                        <th class="col-2">Valor</th>
+                                                        <th class="col-1">Eliminar</th>
+                                                        <th class="col-1" style="display: none;">Giva</th>
+                                                        <th class="col-1" style="display: none;">Idarticulo</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Filas de detalles de productos se agregarán dinámicamente aquí -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Tarjeta de Totales -->
+                            <div class="col-md-6 ml-auto">
+                                <div class="card mb-3 border-1 shadow-sm">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="font-weight-bold"><i class="fas fa-calculator mr-2"></i>Totales</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <!-- Campos para Subtotales, Valor IVA, y Total -->
+                                        <div class="form-group row">
+                                            <label for="comsubtotal0" class="col-sm-5 col-form-label text-right">Subtotal Tarifa 0%:</label>
+                                            <div class="col-sm-5">
+                                                <input type="number" class="form-control form-control-sm" id="comsubtotal0" name="comsubtotal0" style="cursor: not-allowed;" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="comsubtotal12" class="col-sm-5 col-form-label text-right">Subtotal Tarifa 15%:</label>
+                                            <div class="col-sm-5">
+                                                <input type="number" class="form-control form-control-sm" id="comsubtotal12" name="comsubtotal12" style="cursor: not-allowed;" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="comsubtotal" class="col-sm-5 col-form-label text-right">Subtotal:</label>
+                                            <div class="col-sm-5">
+                                                <input type="number" class="form-control form-control-sm" id="comsubtotal" name="comsubtotal" style="cursor: not-allowed;" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="comvaloriva" class="col-sm-5 col-form-label text-right">Valor IVA:</label>
+                                            <div class="col-sm-5">
+                                                <input type="number" class="form-control form-control-sm" id="comvaloriva" name="comvaloriva" style="cursor: not-allowed;" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="comtotal" class="col-sm-5 col-form-label text-right">Total:</label>
+                                            <div class="col-sm-5">
+                                                <input type="number" class="form-control form-control-sm" id="comtotal" name="comtotal" style="cursor: not-allowed;" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>                    
+                        <!-- Botones -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-sm btn-primary ml-2">
+                                <i class="fas fa-save"></i> Registrar Compra
+                            </button>
+                            <button type="button" class="btn btn-sm btn-warning ml-2" onclick="limpiarFormulario()">
+                                <i class="fas fa-sync"></i> Limpiar
+                            </button>  
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para listar productos -->
+    <div class="modal fade" id="com_modalListaProductos" tabindex="-1" role="dialog" aria-labelledby="com_modalListaProductosLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document" style="max-width: 800px;">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title text-dark font-weight-bold" id="com_modalListaProductosLabel"><i class="fas fa-list text-primary mr-2"></i>Lista de Productos</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Contenido del modal (copiar y pegar el código actual de la lista de productos aquí) -->
+                    <div class="card mb-3 border-1 shadow-sm" style="width: 100%;">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table id="dataTableArt" class="table table-bordered list-products" id="productosTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>Producto</th>
+                                            <th>Código</th>
+                                            <th>Stock</th>
+                                            <th>Stock Máximo</th>
+                                            <th>Costo</th>
+                                            <th>Añadir</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% if lista_articulos %}
+                                            {% for art in lista_articulos %}
+                                                <tr style="{% if art.stock == 0 %}background-color: #ffcccc;{% endif %}">
+                                                    <td class="col-4">{{ art.descripcion_articulo }}</td>
+                                                    <td class="col-2">{{ art.codigoarticulo }}</td>
+                                                    <td style="text-align: center;">
+                                                        {% if art.stock == 0 %}
+                                                            <span class="badge badge-secondary" style="color: white; font-weight: bold; font-size: 13px;">Sin stock</span>
+                                                        {% else %}
+                                                            <span class="badge {% if art.stock >= art.stock_minimo %}badge-success{% elif art.stock < stock_minimo %}badge-danger{% else %}badge-danger{% endif %}" style="color: white; font-weight: bold; font-size: 13px;">
+                                                                {{ art.stock }}
+                                                            </span>
+                                                        {% endif %}
+                                                    </td>   
+                                                    <td style="text-align: center;">
+                                                        <span class="badge badge-warning" style="color: white; font-weight: bold; font-size: 13px;">
+                                                            {{ art.stock_maximo }}
+                                                        </span>
+                                                    </td>      
+                                                    <td class="text-center">$ {{ art.costo }}</td>
+                                                    <td class="d-flex justify-content-center">
+                                                        <button type="button" class="btn btn-sm btn-success com_agregar-producto" data-caduca="{{ art.tiene_fecha_caduca }}" data-manejopor_lotes="{{ art.manejo_por_lotes }}" data-idarticulo="{{ art.idarticulo }}" data-nombre="{{ art.descripcion_articulo }}" data-precio="{{ art.costo }}" data-giva="{{ art.get_valor_iva }}" data-stock="{{ art.stock }}">
+                                                            <i class="fas fa-plus"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nuevo - Modal para detalles del producto -->
+    {% for prod in lista_articulos %}
+    <div class="modal fade" id="modalDetallesProducto{{ prod.idarticulo }}" tabindex="-1" role="dialog" aria-labelledby="modalDetallesProductoLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document" style="max-width: 700px;">
+            <div class="modal-content">
+                <div class="modal-header bg-light">
+                    <h5 class="modal-title text-dark font-weight-bold" id="modalDetallesProductoLabel"><i class="fas fa-boxes text-primary mr-2"></i>Detalles del Producto</h5>
+                </div>
+                <div class="modal-body">
+                    <!-- Mensaje de advertencia -->
+                    <div class="alert alert-warning alert-dismissible fade show mb-3" role="alert">
+                        <strong><i class="fas fa-exclamation-triangle mr-2"></i>¡Atención!</strong> 
+                        Por favor verifique cuidadosamente:
+                        <ul class="mb-0 mt-2">
+                            <li>Los números de lote no deben repetirse</li>
+                            <li>Las cantidades deben ser exactas</li>
+                            <li>Las fechas deben ser correctas</li>
+                            <li>Guardar antes de salir</li>
+                        </ul>
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <!-- Lista Detalles lotes agregar dinamicamente -->
+                    <div class="mb-2 d-flex align-items-center">
+                        <button type="button" class="btn btn-primary btn-sm" id="btnAgregarFila{{ prod.idarticulo }}"><i class="fas fa-plus"></i> Agregar Lote</button>
+                        <div class="ml-3 d-none" id="tiempoVidaUtil{{ prod.idarticulo }}">
+                            <select class="form-control form-control-sm" style="width: 170px;" id="tiempoVidaUtil{{ prod.idarticulo }}">
+                                <option value="" selected>Seleccione Vigencia</option>
+                                <option value="dias">Días</option>
+                                <option value="semanas">Semanas</option>
+                                <option value="meses">Meses</option>
+                                <option value="años">Años</option>
+                            </select>
+                        </div>
+                        <div class="ml-2 d-none" id="valorTiempo{{ prod.idarticulo }}">
+                            <input type="number" class="form-control form-control-sm" style="width: 90px;" min="1" readonly placeholder="Valor">
+                        </div>
+                    </div>
+                    <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                        <table class="table table-bordered" id="detalleLoteTable{{ prod.idarticulo }}" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="col-4">Número/Código<span class="asteriskField">*</span></th>
+                                    <th class="col-2">Cantidad<span class="asteriskField">*</span></th>
+                                    <th class="col-2">Fabricado<span class="asteriskField">*</span></th>
+                                    <th class="col-2">Caducado</th>
+                                    <th class="col-1"></th> <!-- Eliminar -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Agregar lotes dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    {% comment %} <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal"><i class="fas fa-times mr-1"></i>Cancelar</button> {% endcomment %}
+                    <button type="button" class="btn btn-sm btn-primary" id="btnAgregarProducto{{ prod.idarticulo }}" data-idarticulo="{{ prod.idarticulo }}"><i class="fas fa-save mr-1"></i>Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+{% endblock contenido %}
+
+{% block script %}
+<!-- Script general -->
+<script>
+    $(document).on('click', '.com_agregar-producto, .editar-lotes', function () {
+        var caduca = $(this).data('caduca');
+        var manejopor_lotes = $(this).data('manejopor_lotes');
+        var idart = $(this).data('idarticulo');
+
+        if (manejopor_lotes === 'True'){
+            console.log('si maneja lotes');
+            $('#btnAgregarProducto' + idart).off('click').on('click', function () {
+                var isValid = true;
+                var filas = $('#modalDetallesProducto' + idart + ' tbody tr');
+                cantidadTotalLotes = 0;
+                // Verificar si al menos un lote está agregado
+                if (filas.length === 0) {
+                    Swal.fire({
+                        title: 'Advertencia',
+                        text: 'Debes agregar al menos un lote para el producto',
+                        icon: 'warning',
+                        confirmButtonColor: '#4169E1',
+                        confirmButtonText: 'Aceptar'
+                    });
+                    return;
+                }
+                var numerolotes = [];
+
+                filas.each(function () {
+                    var numLoteInput = $(this).find('input[name="num_lote[]"]');
+                    var cantidadInput = $(this).find('input[name="cantidad_lote[]"]');
+                    var fechaFabricacionInput = $(this).find('input[name="fecha_fabricacion[]"]');
+                    var fechaCaducidadInput = $(this).find('input[name="fecha_caducidad[]"]');
+
+                    // Limpiar mensajes de error anteriores
+                    $(this).find('.error-message').remove();
+
+                    // Validar que los campos no estén vacíos
+                    if (numLoteInput.val().trim() === '') {
+                        numLoteInput.closest('td').append('<div class="error-message" style="color: red; font-size: 12px;"><strong>Campo obligatorio.</strong></div>');
+                        isValid = false;
+                    } else {
+                        if (numerolotes.includes(numLoteInput.val().trim())) {
+                            numLoteInput.closest('td').append('<div class="error-message" style="color: red; font-size: 12px;"><strong>El Número de lote no se puede repetir.</strong></div>');
+                            isValid = false;
+                        } else {
+                            numerolotes.push(numLoteInput.val().trim());
+                        }
+                    }
+                    if (cantidadInput.val().trim() === '') {
+                        cantidadInput.closest('td').append('<div class="error-message" style="color: red; font-size: 12px;"><strong>Campo obligatorio.</strong></div>');
+                        isValid = false;
+                    } else {
+                        cantidadTotalLotes += parseFloat(cantidadInput.val()) || 0;
+                    }
+                    if (fechaFabricacionInput.val().trim() === '') {
+                        fechaFabricacionInput.closest('td').append('<div class="error-message" style="color: red; font-size: 12px;"><strong>Campo obligatorio.</strong></div>');
+                        isValid = false;
+                    }
+                    if (caduca === 'True' && fechaCaducidadInput.val().trim() === '') {
+                        fechaCaducidadInput.closest('td').append('<div class="error-message" style="color: red; font-size: 12px;"><strong>Campo obligatorio.</strong></div>');
+                        isValid = false;
+                    }
+
+                    if (isValid) {
+                        // Validar que la fecha de caducidad sea mayor a la fecha actual y a la fecha de fabricación
+                        var fechaActual = new Date();
+                        var fechaFabricacion = new Date(fechaFabricacionInput.val());
+                        var fechaCaducidad = new Date(fechaCaducidadInput.val());
+
+                        if (fechaCaducidad <= fechaActual) {
+                            fechaCaducidadInput.closest('td').append('<div class="error-message" style="color: red; font-size: 12px;"><strong>La fecha de caducidad debe ser mayor a la fecha actual.</strong></div>');
+                            isValid = false;
+                        }
+                        if (fechaCaducidad <= fechaFabricacion) {
+                            fechaCaducidadInput.closest('td').append('<div class="error-message" style="color: red; font-size: 12px;"><strong>La fecha de caducidad debe ser mayor a la fecha de fabricación.</strong></div>');
+                            isValid = false;
+                        }
+                    }
+                });
+
+                if (isValid) {
+                    var nombreProducto = $(this).data('nombre');
+                    var stockProducto = $(this).data('stock');
+                    var idarticuloProducto = $(this).data('idarticulo');
+                    var precioProducto = $(this).data('precio');
+                    var givaProducto = parseFloat($(this).data('giva')) || 0;
+                    precioProducto = parseFloat(precioProducto.replace(',', '.')).toFixed(2);
+
+                    // Calcular el valor directamente
+                    var cantidad = cantidadTotalLotes; // Establecer un valor predeterminado o modificar según
+                    var valor = (cantidad * precioProducto).toFixed(2);
+                    givaProducto = givaProducto !== 0 ? givaProducto / 100 : 0.00;
+
+                    // Verificar si el producto ya está en la tabla
+                    var filaExistente = $('#com_detalleProductosTable tbody tr').filter(function () {
+                        return $(this).find('input[name="idarticulo[]"]').val() === String(idarticuloProducto);
+                    });
+    
+                    if (filaExistente.length > 0) {
+                        // Actualizar la fila existente
+                        filaExistente.find('input[name="cantidad[]"]').val(cantidad).trigger('change');
+                        calcularTotales();
+                        $('#modalDetallesProducto' + idart).modal('hide');
+                    } else {
+                        // Agregar la nueva fila a la tabla de detalles
+                        $('#com_detalleProductosTable tbody').append(
+                            '<tr>' +
+                            '<td>' + nombreProducto + '<br><a href="#" class="editar-lotes" data-caduca="' + caduca + '" data-manejopor_lotes="' + manejopor_lotes + '" data-idarticulo="' + idarticuloProducto + '">Editar lotes</a></td>' +
+                            '<td><input style="cursor: not-allowed;" type="number" class="form-control form-control-sm" name="cantidad[]" value="' + cantidad + '" onchange="calcularTotal(this)" oninput="validarCantidad(this)" required min="0" readonly></td>' +
+                            '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="precio_unitario[]" value="' + precioProducto + '" readonly></td>' +
+                            '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="valor[]" value="' + valor + '" readonly></td>' +
+                            '<td class="text-center"><button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button></td>' +
+                            '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="caduca[]" value="' + caduca + '" readonly></td>' +
+                            '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="manejopor_lotes[]" value="' + manejopor_lotes + '" readonly></td>' +
+                            '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="giva[]" value="' + givaProducto + '" readonly></td>' +
+                            '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="idarticulo[]" value="' + idarticuloProducto + '" readonly></td>' +
+                            '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="stock[]" value="' + stockProducto + '" readonly></td>' +
+                            '</tr>'
+                        );
+                        calcularTotales();
+                        $('#modalDetallesProducto' + idart).modal('hide');
+                    }
+                }
+            });
+        } else {
+            var nombreProducto = $(this).data('nombre');
+            var stockProducto = $(this).data('stock');
+            var idarticuloProducto = $(this).data('idarticulo');
+
+            // Verificar si el producto ya está en la tabla de detalles
+            if (!productoYaAgregado(idarticuloProducto)) {
+                var precioProducto = $(this).data('precio');
+                givaProducto = parseFloat($(this).data('giva')) || 0;
+                precioProducto = parseFloat(precioProducto.replace(',', '.'));
+                precioProducto = precioProducto.toFixed(2);
+
+                // Calcular el valor directamente
+                var cantidad = 1; // Establecer un valor predeterminado o modificar según
+                var valor = cantidad * precioProducto;
+                valor = valor.toFixed(2);
+                if (givaProducto !== 0){
+                    givaProducto = givaProducto / 100; //
+                } else {
+                    givaProducto = 0.00;
+                }
+                // Agregar la fila a la tabla de detalles
+                $('#com_detalleProductosTable tbody').append(
+                    '<tr>' +
+                    '<td>' + nombreProducto + '</td>' +
+                    '<td><input type="number" class="form-control form-control-sm" name="cantidad[]" value="' + cantidad + '" onchange="calcularTotal(this)" oninput="validarCantidad(this)" required min="0"></td>' +
+                    '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="precio_unitario[]" value="' + precioProducto + '" readonly></td>' +
+                    '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="valor[]" value="' + valor + '" readonly></td>' +
+                    '<td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>' +
+                    '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="caduca[]" value="' + caduca + '" readonly></td>' +
+                    '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="manejopor_lotes[]" value="' + manejopor_lotes + '" readonly></td>' +
+                    '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="giva[]" value="' + givaProducto + '" readonly></td>' +
+                    '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="idarticulo[]" value="' + idarticuloProducto + '" readonly></td>' +
+                    '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="stock[]" value="' + stockProducto + '" readonly></td>' +
+                    '</tr>'
+                );
+                calcularTotales();
+            }
+        }
+    });
+
+    // Función para verificar si el producto ya está en la tabla de detalles
+    function productoYaAgregado(idarticulo) {
+        var productosAgregados = $('#com_detalleProductosTable tbody input[name="idarticulo[]"]').map(function () {
+            return $(this).val().trim();
+        }).get();
+        return productosAgregados.includes(String(idarticulo));
+    }
+
+    // Advertencia
+    $('form#compraForm').submit(function (e) {
+        // Verificar si no hay productos en la tabla de detalles
+        if ($('#com_detalleProductosTable tbody tr').length === 0) {
+            // Mostrar la ventana emergente
+            Swal.fire({
+                title: 'Advertencia',
+                text: 'No puedes registrar una compra sin seleccionar al menos un producto.',
+                icon: 'warning',
+                confirmButtonColor: '#4169E1',
+                confirmButtonText: 'Aceptar'
+            });
+            // Detener el envío del formulario
+            e.preventDefault();
+        }
+    });
+
+    function calcularTotal(input) {
+        var fila = $(input).closest('tr');
+        var cantidad = parseFloat(fila.find('input[name="cantidad[]"]').val()) || 0;
+        var precioUnitario = parseFloat(fila.find('input[name="precio_unitario[]"]').val()) || 0;
+
+        var valor = cantidad * precioUnitario;
+
+        fila.find('input[name="valor[]"]').val(valor.toFixed(2));
+        calcularTotales();
+    }
+
+    // Función para calcular totales
+    function calcularTotales() {
+        var comsubtotal0 = 0;
+        var comsubtotal12 = 0;
+        var comsubtotal = 0;
+        var valorIVA = 0;
+        var ivageneral = 0.00;
+
+        // Iterar sobre las filas de la tabla de detalles
+        $('#com_detalleProductosTable tbody tr').each(function () {
+            var cantidad = parseFloat($(this).find('input[name="cantidad[]"]').val()) || 0;
+            var valor = parseFloat($(this).find('input[name="valor[]"]').val()) || 0;
+            var giva = parseFloat($(this).find('input[name="giva[]"]').val()) || 0;
+
+            if (giva === 0.00) {
+                comsubtotal0 += valor;
+            } else {
+                comsubtotal12 += valor;
+                ivageneral = giva; //
+            }
+
+            comsubtotal += valor;
+        });
+
+        valorIVA = comsubtotal12 * ivageneral; //
+
+        // Actualizar los campos de totales
+        $('#comsubtotal0').val(comsubtotal0.toFixed(2));
+        $('#comsubtotal12').val(comsubtotal12.toFixed(2));
+        $('#comsubtotal').val(comsubtotal.toFixed(2));
+        $('#comvaloriva').val(valorIVA.toFixed(2));
+
+        // Calcular el total
+        var comtotal = comsubtotal + valorIVA;
+        $('#comtotal').val(comtotal.toFixed(2));
+    }
+
+    function validarCantidad(input) {
+        var valorSinComa = input.value.replace(/,/g, '');
+        var cantidad = parseInt(valorSinComa);
+
+        // Verificar que la cantidad no sea negativa ni neutra y que sea un entero
+        if (cantidad == 0) {
+            input.value = '';
+        } else {
+            input.value = cantidad.toLocaleString();
+        }
+        calcularTotal(input);
+    }
+</script>
+
+{% comment %} Script con dataTable {% endcomment %}
+<script>
+    $(document).ready(function () {
+        $('#dataTableArt').DataTable({
+            "paging": true,
+            "lengthChange": false,
+            "searching": true,
+            "ordering": false,
+            "info": true,
+            "autoWidth": true,
+            "lengthMenu": [[8, 16, 24, -1], [8, 16, 24, "Mostrar Todo"]],
+            "pageLength": 8, // Muestra 8 registros por página por defecto
+            "dom": '<"row"<"col-md-6"l><"col-md-6"f>>Brtip',
+            "buttons": [],
+            "columnDefs": [
+                { "orderable": false, "targets": -1 },  // Deshabilitar ordenación en la última columna
+                { "searchable": false, "targets": -1 }  // Deshabilitar búsqueda en la última columna
+            ],
+            "language": {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sEmptyTable": "Ningún registro disponible",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+    });
+</script>
+
+<!-- Script para aplicar Select2 al campo de proveedor -->
+<script>
+    $(document).ready(function () {
+        // Inicializa Select2 en el campo con ID 'cliente'
+        $('#proveedor').select2({
+            theme: 'bootstrap4',
+            placeholder: 'Seleccionar proveedor: (nombre/RUC)', // Texto del placeholder
+            dropdownCssClass: 'custom-select2-dropdown', // Clase CSS personalizada para el menú desplegable
+            width: '100%',
+            language: {
+                noResults: function () {
+                    return 'No se encontraron resultados';
+                },
+                searching: function () {
+                    return 'Buscando...';
+                },
+            }
+        });
+
+        $('#proveedor').on('select2:open', function() {
+            // Localizar el campo de búsqueda existente
+            const searchField = $('.select2-search__field');
+            
+            // Crear contenedor flexible (si no existe)
+            if(!$('.select2-search').hasClass('has-icon')) {
+                $('.select2-search')
+                    .addClass('has-icon')
+                    .css({
+                        'display': 'flex',
+                        'align-items': 'center',
+                        'padding-left': '10px'
+                    });
+                
+                // Insertar la lupa antes del campo
+                $('<i class="fas fa-search text-muted mr-2"></i>')
+                    .insertBefore(searchField);
+                
+                // Ajustar el campo de búsqueda
+                searchField.css('padding-left', '5px');
+            }
+        });
+    });
+</script>
+
+{% comment %} Limpiar formulario {% endcomment %}
+<script>
+    function limpiarFormulario() {
+        // Limpiar campos de texto y selección
+        $('#comconcepto').val('');
+        $('#proveedor').val('').trigger('change');
+
+        // Limpiar la tabla de detalles
+        $('#com_detalleProductosTable tbody').empty();
+
+        // Limpiar campos de totales
+        $('#comsubtotal0, #comsubtotal12, #comsubtotal, #comvaloriva, #comtotal').val('');
+
+        // Seleccionar todas las tablas de detalles de lotes dentro de los modales
+        $('[id^="modalDetallesProducto"]').each(function () {
+            var modal = $(this);
+            var modalId = modal.attr('id');
+            modal.find('[id^="detalleLoteTable"] tbody').empty(); // Vaciar las filas
+        });
+
+        // limpiar select y input de tiempo vida util
+        $('[id^="tiempoVidaUtil"]').val('');
+        $('[id^="valorTiempo"] input').val('');
+
+        // Habilitar el botón de envío del formulario
+        $('#botonEnviar').prop('disabled', false);
+    }
+</script>
+
+{% comment %} Fecha actual obtener {% endcomment %}
+<script>
+    var fechaActual = new Date();
+    var dd = String(fechaActual.getDate()).padStart(2, '0');
+    var mm = String(fechaActual.getMonth() + 1).padStart(2, '0');
+    var yyyy = fechaActual.getFullYear();
+    fechaActual = yyyy + '-' + mm + '-' + dd;
+    document.getElementById('fecha_entrada').min = fechaActual;
+    document.getElementById('fecha_entrada').value = fechaActual;
+</script>
+
+{% comment %} Script para mostrar succes y error {% endcomment %}
+<script>
+    {% if messages %}
+        {% for m in messages %}
+            {% if m.tags == 'success' %}
+                setTimeout(limpiarFormulario, 100);
+            {% elif m.tags == 'error' %}
+                Swal.fire({
+                    title: "Errores encontrados",
+                    html: `<div style="font-size: 14px;">{{m|safe}}</div>`,
+                    icon: "error",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#4169E1"
+                });
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>
+
+{% comment %} Abrir Modal detalle Producto con sus lotes para agregar o editar lotes {% endcomment %}
+<script>
+    $(document).on('click', '.com_agregar-producto, .editar-lotes', function (e) {
+        e.preventDefault(); // Evita el comportamiento predeterminado del enlace
+        var productoId = $(this).data('idarticulo');
+        var caduca = $(this).data('caduca');
+        var manejopor_lotes = $(this).data('manejopor_lotes');
+
+        if (manejopor_lotes === 'True'){
+            $('#modalDetallesProducto' + productoId).modal({
+                backdrop: 'static', // Evita que el modal se cierre al hacer clic fuera de él
+                keyboard: false // Evita que el modal se cierre cuando se presiona la tecla Esc
+            });
+            if (caduca === 'False') {
+                $('#modalDetallesProducto' + productoId).find('input[name="fecha_caducidad[]"]').prop('readonly', true);
+                $('#tiempoVidaUtil' + productoId).addClass('d-none');
+                $('#valorTiempo' + productoId).addClass('d-none');
+            }else{
+                $('#modalDetallesProducto' + productoId).find('input[name="fecha_caducidad[]"]').prop('readonly', false);
+                $('#tiempoVidaUtil' + productoId).removeClass('d-none');
+                $('#valorTiempo' + productoId).removeClass('d-none');
+                $('#valorTiempo' + productoId + ' input').prop('readonly', false);
+
+                // Evento para actualizar fecha caducidad cuando cambia tiempo vida util
+                $(document).on('change', '#tiempoVidaUtil' + productoId + ' select', function(){
+                    var tiempoVidaUtil = $(this).find('option:selected').val();
+                    var modal = $('#modalDetallesProducto' + productoId);
+                    $('#valorTiempo' + productoId + ' input').val('');
+                    
+                    $('#valorTiempo' + productoId + ' input').off('change keyup').on('change keyup', function(){
+                        var valor = parseInt($(this).val());
+                        if (!isNaN(valor)) {
+                            // Recorrer todas las filas de la tabla de lotes
+                            modal.find('#detalleLoteTable' + productoId + ' tbody tr').each(function() {
+                                var row = $(this);
+                                var fechaFabricacion = row.find('input[name="fecha_fabricacion[]"]').val();
+                                var inputCaducidad = row.find('input[name="fecha_caducidad[]"]');
+                                
+                                if (fechaFabricacion) {
+                                    var nuevaFecha = new Date(fechaFabricacion);
+                                    
+                                    if (tiempoVidaUtil === 'dias') {
+                                        nuevaFecha.setDate(nuevaFecha.getDate() + valor);
+                                    } else if (tiempoVidaUtil === 'semanas') {
+                                        nuevaFecha.setDate(nuevaFecha.getDate() + (valor * 7));
+                                    } else if (tiempoVidaUtil === 'meses') {
+                                        nuevaFecha.setMonth(nuevaFecha.getMonth() + valor);
+                                    } else if (tiempoVidaUtil === 'años') {
+                                        nuevaFecha.setFullYear(nuevaFecha.getFullYear() + valor);
+                                    }
+                                    
+                                    inputCaducidad.val(nuevaFecha.toISOString().split('T')[0]);
+                                }
+                            });
+                        }
+                    });
+                });
+
+                // Evento para actualizar fecha caducidad cuando cambia fecha fabricación
+                $(document).on('change', '#detalleLoteTable' + productoId + ' input[name="fecha_fabricacion[]"]', function() {
+                    var tiempoVidaUtil = $('#tiempoVidaUtil' + productoId + ' select').val();
+                    var valorTiempo = parseInt($('#valorTiempo' + productoId + ' input').val());
+                    var row = $(this).closest('tr');
+                    var inputCaducidad = row.find('input[name="fecha_caducidad[]"]');
+                    var fechaFabricacion = $(this).val();
+                    
+                    if (tiempoVidaUtil && !isNaN(valorTiempo) && fechaFabricacion) {
+                        var nuevaFecha = new Date(fechaFabricacion);
+                        
+                        if (tiempoVidaUtil === 'dias') {
+                            nuevaFecha.setDate(nuevaFecha.getDate() + valorTiempo);
+                        } else if (tiempoVidaUtil === 'semanas') {
+                            nuevaFecha.setDate(nuevaFecha.getDate() + (valorTiempo * 7));
+                        } else if (tiempoVidaUtil === 'meses') {
+                            nuevaFecha.setMonth(nuevaFecha.getMonth() + valorTiempo);
+                        } else if (tiempoVidaUtil === 'años') {
+                            nuevaFecha.setFullYear(nuevaFecha.getFullYear() + valorTiempo);
+                        }
+                        
+                        inputCaducidad.val(nuevaFecha.toISOString().split('T')[0]);
+                    }
+                });
+            }
+        }
+    });
+</script>
+
+{% comment %} Agregar los lotes del producto {% endcomment %}
+{% for prod in lista_articulos %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("btnAgregarFila{{ prod.idarticulo }}").addEventListener("click", function() {
+            var tableBody = document.querySelector("#detalleLoteTable{{ prod.idarticulo }} tbody");
+            var caduca = "{{ prod.tiene_fecha_caduca }}";
+            var newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td class="d-none"><input type="hidden" name="lote_articulo_id[]" value="{{ prod.idarticulo }}"></td>
+                <td><input type="text" class="form-control form-control-sm" name="num_lote[]" required maxlength="15"></td>
+                <td><input type="number" class="form-control form-control-sm" name="cantidad_lote[]" required min="1"></td>
+                <td><input type="date" class="form-control form-control-sm" name="fecha_fabricacion[]" required></td>
+                <td><input type="date" class="form-control form-control-sm" name="fecha_caducidad[]" required ${caduca == 'False' ? 'readonly' : ''}></td>
+                <td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFilaLote(this)"><i class="fas fa-trash-alt"></i></button></td>
+            `;
+        });
+    });
+
+    function eliminarFilaLote(button) {
+        var row = button.closest("tr");
+        row.remove();
+    }
+</script>
+{% endfor %}
+
+{% comment %} Pasar datos de un boton a otro {% endcomment %}
+<script>
+    $(document).ready(function() {
+        $('#com_modalListaProductos').on('shown.bs.modal', function () {
+            $('.com_agregar-producto').click(function() {
+                // Obtener los datos del producto del botón actual
+                var dato_idarticulo = $(this).data('idarticulo');
+                var dato_nombre = $(this).data('nombre');
+                var dato_precio = $(this).data('precio');
+                var dato_giva = $(this).data('giva');
+                var dato_stock = $(this).data('stock');
+                var dato_caduca = $(this).data('caduca')
+                var dato_manejopor_lotes = $(this).data('manejopor_lotes')
+
+                // Guardar los datos en localStorage
+                localStorage.setItem('producto_' + dato_idarticulo, JSON.stringify({
+                    'idarticulo': dato_idarticulo,
+                    'nombre': dato_nombre,
+                    'precio': dato_precio,
+                    'giva': dato_giva,
+                    'stock': dato_stock,
+                    'caduca': dato_caduca,
+                    'manejopor_lotes': dato_manejopor_lotes
+                }));
+
+                // Asignar los datos del producto al botón receptor
+                $('#btnAgregarProducto' + dato_idarticulo).data({
+                    'idarticulo': dato_idarticulo,
+                    'nombre': dato_nombre,
+                    'precio': dato_precio,
+                    'giva': dato_giva,
+                    'stock': dato_stock,
+                    'caduca': dato_caduca,
+                    'manejopor_lotes': dato_manejopor_lotes
+                });
+                console.log(dato_idarticulo);
+            });
+        });
+    });
+
+    // Recuperar los datos del localStorage cuando se carga la página
+    $(document).ready(function() {
+        // Recuperar los datos de localStorage y asignarlos a los botones correspondientes
+        $('button[id^="btnAgregarProducto"]').each(function() {
+            var productoId = $(this).attr('id').replace('btnAgregarProducto', '');
+            var productoData = localStorage.getItem('producto_' + productoId);
+
+            if (productoData) {
+                productoData = JSON.parse(productoData);
+                $(this).data({
+                    'idarticulo': productoData.idarticulo,
+                    'nombre': productoData.nombre,
+                    'precio': productoData.precio,
+                    'giva': productoData.giva,
+                    'stock': productoData.stock,
+                    'caduca': productoData.caduca,
+                    'manejopor_lotes': productoData.manejopor_lotes
+                });
+            }
+        });
+    });
+</script>
+
+{% comment %} Enviar los datos del modal de lotes del producto junto con el formulario principal {% endcomment %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Asegurarse de agregar los datos de los lotes antes de enviar el formulario
+        document.querySelector('form#compraForm').addEventListener('submit', function(e) {
+            var lotes = [];  // Arreglo para almacenar todos los lotes
+            var num_lote_inputs = document.getElementsByName('num_lote[]');
+            var cantidad_lote_inputs = document.getElementsByName('cantidad_lote[]');  
+            var fecha_fabricacion_inputs = document.getElementsByName('fecha_fabricacion[]');
+            var fecha_caducidad_inputs = document.getElementsByName('fecha_caducidad[]');
+            var articulo_ids = document.getElementsByName('lote_articulo_id[]');
+            // Recorrer todos los lotes y obtener los datos
+            for (var i = 0; i < num_lote_inputs.length; i++) {
+                var lote = {
+                    num_lote: num_lote_inputs[i].value,
+                    cantidad_lote: cantidad_lote_inputs[i].value,
+                    fecha_fabricacion: fecha_fabricacion_inputs[i].value,
+                    fecha_caducidad: fecha_caducidad_inputs[i].value,
+                    lote_articulo_id: articulo_ids[i].value
+                };
+                lotes.push(lote);  // Agregar el lote al arreglo
+            }
+            // Crear un campo oculto que contendrá los datos de los lotes en formato JSON
+            var inputLotes = document.createElement('input');
+            inputLotes.type = 'hidden';  // Campo oculto
+            inputLotes.name = 'lotes';  // Nombre genérico para los lotes
+            inputLotes.value = JSON.stringify(lotes);  // Convertir los lotes a formato JSON y asignarlo al campo oculto
+            // Agregar el campo oculto al formulario principal
+            document.getElementById('compraForm').appendChild(inputLotes);
+        });
+    });
+</script>
+
+{% comment %} Eliminar el producto y los lotes relacionados en el modal del producto {% endcomment %}
+<script>
+    $(document).ready(function () {
+        function eliminarProductoYLotes(idarticuloProducto) {
+            // Eliminar el producto de la tabla de detalles
+            $('#com_detalleProductosTable tbody tr').each(function () {
+                var filaProducto = $(this);
+                var idProducto = filaProducto.find('input[name="idarticulo[]"]').val();
+                if (idProducto === idarticuloProducto) {
+                    filaProducto.remove(); // Eliminar la fila del producto
+                }
+            });
+            // Eliminar los lotes relacionados en el modal
+            $('#modalDetallesProducto' + idarticuloProducto + ' #detalleLoteTable' + idarticuloProducto + ' tbody tr').each(function () {
+                var filaLote = $(this);
+                var idLoteProducto = filaLote.find('input[name="lote_articulo_id[]"]').val();
+                if (idLoteProducto === idarticuloProducto) {
+                    filaLote.remove(); // Eliminar la fila del lote
+                }
+            });
+        }
+
+        $('#com_detalleProductosTable').on('click', '.btn-danger', function () {
+            var idarticuloProducto = $(this).closest('tr').find('input[name="idarticulo[]"]').val();
+            eliminarProductoYLotes(idarticuloProducto);
+            calcularTotales();
+        });
+    });
+</script>
+
+{% comment %} Eliminar productos q no son por lotes {% endcomment %}
+<script>
+    function eliminarFila(button) {
+        $(button).closest('tr').remove();
+        calcularTotales();
+    }
+</script>
+
+{% comment %} Guardar datos generales almacenamiento local {% endcomment %}
+<script>
+    $(document).ready(function() {
+        proveedorField = $('#proveedor');
+        comconceptoField = $('#comconcepto');
+        comsubtotal0Field = $('#comsubtotal0');
+        comsubtotal12Field = $('#comsubtotal12');
+        comsubtotalField = $('#comsubtotal');
+        comvalorivaField = $('#comvaloriva');
+        comtotalField = $('#comtotal');
+        
+        // Cargar datos del almacenamiento local al cargar la página
+        proveedorValue = localStorage.getItem('proveedor');
+        comconceptoValue = localStorage.getItem('comconcepto');
+        comsubtotal0Value = localStorage.getItem('comsubtotal0');
+        comsubtotal12Value = localStorage.getItem('comsubtotal12');
+        comsubtotalValue = localStorage.getItem('comsubtotal');
+        comvalorivaValue = localStorage.getItem('comvaloriva');
+        comtotalValue = localStorage.getItem('comtotal');
+
+        if (comconceptoValue || comsubtotal0Value || comsubtotal12Value || comsubtotalValue || comvalorivaValue || comtotalValue || proveedorValue) {
+            proveedorField.val(proveedorValue).trigger('change');
+            comconceptoField.val(comconceptoValue);
+            comsubtotal0Field.val(comsubtotal0Value);
+            comsubtotal12Field.val(comsubtotal12Value);
+            comsubtotalField.val(comsubtotalValue);
+            comvalorivaField.val(comvalorivaValue);
+            comtotalField.val(comtotalValue);
+        }
+        console.log("Proveedor asignado:", proveedorValue);
+
+        
+        // Guardar datos al almacenamiento local
+        $(window).on('beforeunload', function() {
+            localStorage.setItem('proveedor', proveedorField.val());
+            localStorage.setItem('comconcepto', comconceptoField.val());
+            localStorage.setItem('comsubtotal0', comsubtotal0Field.val());
+            localStorage.setItem('comsubtotal12', comsubtotal12Field.val());
+            localStorage.setItem('comsubtotal', comsubtotalField.val());
+            localStorage.setItem('comvaloriva', comvalorivaField.val());
+            localStorage.setItem('comtotal', comtotalField.val());
+        });
+    });
+</script>
+
+{% comment %} Guardar los datos de cada detalle de la compra en almacenamiento local {% endcomment %}
+<script>
+    $(document).ready(function () {
+        // Guardar los datos de la tabla de productos al abandonar la página
+        $(window).on('beforeunload', function () {
+            var com_detalleProductos = [];
+            $('#com_detalleProductosTable tbody tr').each(function () {
+                var producto = {
+                    nombreProducto: $(this).find('td').eq(0).contents().filter(function() {
+                        return this.nodeType === 3;
+                    }).text().trim(),
+                    cantidad: $(this).find('input[name="cantidad[]"]').val(),
+                    precio: $(this).find('input[name="precio_unitario[]"]').val(),
+                    valor: $(this).find('input[name="valor[]"]').val(),
+                    giva: $(this).find('input[name="giva[]"]').val(),
+                    idarticulo: $(this).find('input[name="idarticulo[]"]').val(),
+                    stock: $(this).find('input[name="stock[]"]').val(),
+                    manejopor_lotes: $(this).find('input[name="manejopor_lotes[]"]').val(),
+                    caduca: $(this).find('input[name="caduca[]"]').val()
+                };
+                com_detalleProductos.push(producto);
+            });
+            localStorage.setItem('com_detalleProductos', JSON.stringify(com_detalleProductos));
+        });
+
+        // Cargar los datos de los productos al cargar la página
+        var com_detalleProductosValue = localStorage.getItem('com_detalleProductos');
+        if (com_detalleProductosValue) {
+            var com_detalleProductos = JSON.parse(com_detalleProductosValue);
+            com_detalleProductos.forEach(function (producto) {
+                if (producto.manejopor_lotes === 'True'){
+                    $('#com_detalleProductosTable tbody').append(
+                        '<tr>' +
+                        '<td>' + producto.nombreProducto + '<br><a href="#" class="editar-lotes" data-caduca="' + producto.caduca + '" data-manejopor_lotes="' + producto.manejopor_lotes + '" data-idarticulo="' + producto.idarticulo + '">Editar lotes</a></td>' +
+                        '<td><input style="cursor: not-allowed;" type="number" class="form-control form-control-sm" name="cantidad[]" value="' + producto.cantidad + '" onchange="calcularTotal(this)" oninput="validarCantidad(this)" required min="0" readonly></td>' +
+                        '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="precio_unitario[]" value="' + producto.precio + '" readonly></td>' +
+                        '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="valor[]" value="' + producto.valor + '" readonly></td>' +
+                        '<td class="text-center"><button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt"></i></button></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="caduca[]" value="' + producto.caduca + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="manejopor_lotes[]" value="' + producto.manejopor_lotes + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="giva[]" value="' + producto.giva + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="idarticulo[]" value="' + producto.idarticulo + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="stock[]" value="' + producto.stock + '" readonly></td>' +
+                        '</tr>'
+                    );
+                } else {
+                    $('#com_detalleProductosTable tbody').append(
+                        '<tr>' +
+                        '<td>' + producto.nombreProducto + '</td>' +
+                        '<td><input type="number" class="form-control form-control-sm" name="cantidad[]" value="' + producto.cantidad + '" onchange="calcularTotal(this)" oninput="validarCantidad(this)" required min="0"></td>' +
+                        '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="precio_unitario[]" value="' + producto.precio + '" readonly></td>' +
+                        '<td><input style="cursor: not-allowed;" type="number" step="0.01" class="form-control form-control-sm" name="valor[]" value="' + producto.valor + '" readonly></td>' +
+                        '<td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFila(this)"><i class="fas fa-trash-alt"></i></button></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="caduca[]" value="' + producto.caduca + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="manejopor_lotes[]" value="' + producto.manejopor_lotes + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="giva[]" value="' + producto.giva + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="idarticulo[]" value="' + producto.idarticulo + '" readonly></td>' +
+                        '<td style="display: none;"><input type="hidden" class="form-control form-control-sm" name="stock[]" value="' + producto.stock + '" readonly></td>' +
+                        '</tr>'
+                    );
+                }
+            });
+            calcularTotales();
+        }
+    });
+</script>
+
+{% comment %} Guardar los datos de los lotes en almacenamiento local {% endcomment %}
+<script>
+    $(document).ready(function () {
+        // Función para guardar los lotes en el localStorage
+        function guardarLotesEnLocalStorage() {
+            var lotes = [];
+            $('[id^="detalleLoteTable"]').each(function () {
+                var idarticulo = $(this).attr('id').replace('detalleLoteTable', ''); // Extrae el idarticulo
+                var tableBody = $(this).find('tbody');
+                tableBody.find('tr').each(function () {
+                    var lote = {
+                        idarticulo: idarticulo,
+                        num_lote: $(this).find('input[name="num_lote[]"]').val(),
+                        cantidad_lote: $(this).find('input[name="cantidad_lote[]"]').val(),
+                        fecha_fabricacion: $(this).find('input[name="fecha_fabricacion[]"]').val(),
+                        fecha_caducidad: $(this).find('input[name="fecha_caducidad[]"]').val(),
+                    };
+                    lotes.push(lote); // Almacena el lote
+                });
+            });
+            // Guarda los lotes en el localStorage
+            localStorage.setItem('lotes', JSON.stringify(lotes));
+        }
+
+        // Función para cargar los lotes desde el localStorage
+        function cargarLotesDesdeLocalStorage() {
+            var lotesValue = localStorage.getItem('lotes');
+            if (lotesValue) {
+                var lotes = JSON.parse(lotesValue); // Convierte la cadena JSON de vuelta a un objeto
+                lotes.forEach(function (lote) {
+                    var tableBody = $('#detalleLoteTable' + lote.idarticulo + ' tbody');
+                    tableBody.append(
+                        '<tr>' +
+                        '<td class="d-none"><input type="hidden" name="lote_articulo_id[]" value="' + lote.idarticulo + '"></td>' +
+                        '<td><input type="text" class="form-control form-control-sm" name="num_lote[]" value="' + lote.num_lote + '" required maxlength="10"></td>' +
+                        '<td><input type="number" class="form-control form-control-sm" name="cantidad_lote[]" value="' + lote.cantidad_lote + '" required min="1"></td>' +
+                        '<td><input type="date" class="form-control form-control-sm" name="fecha_fabricacion[]" value="' + lote.fecha_fabricacion + '" required></td>' +
+                        '<td><input type="date" class="form-control form-control-sm" name="fecha_caducidad[]" value="' + lote.fecha_caducidad + '" required></td>' +
+                        '<td class="text-center"><button type="button" class="btn btn-danger btn-sm" onclick="eliminarFilaLote(this)"><i class="fas fa-trash-alt"></i></button></td>' +
+                        '</tr>'
+                    );
+                });
+            }
+        }
+
+        // Cargar los lotes desde el localStorage al cargar la página
+        cargarLotesDesdeLocalStorage();
+
+        // Guardar lotes al intentar abandonar la página o recargarla
+        $(window).on('beforeunload', function () {
+            guardarLotesEnLocalStorage();
+        });
+    });
+</script>
+{% endblock script %}
+
+
+

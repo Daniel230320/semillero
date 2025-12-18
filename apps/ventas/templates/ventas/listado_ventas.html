@@ -1,0 +1,180 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Listado de Ventas{% endblock titulo %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Ventas</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Ventas</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Card para Filtrar -->
+    <div class="card shadow mb-2 filtercard">
+            <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+                <h6 class="m-0 font-weight-bold text-primary h5">
+                    <i class="fas fa-search mr-2"></i>Búsqueda
+                </h6>
+                <div>
+                    <a class="btn btn-sm" type="button" data-toggle="collapse" data-target="#filtroCollapse" aria-expanded="true" aria-controls="filtroCollapse" id="toggleButton">
+                        <i class="fas fa-minus"></i>
+                    </a>
+                    <a class="btn btn-sm" id="closeFilterButton">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="collapse show" id="filtroCollapse">
+                <div class="card-body">
+                    {% load crispy_forms_tags %}
+                    <form method="GET" action="">
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ filtro.form.idcliente|as_crispy_field }}
+                            </div>
+                            {% if request.user.is_superuser %}
+                                <div class="col-md-4">
+                                    {{ filtro.form.user|as_crispy_field }}
+                                </div>
+                            {% endif %}
+                            <div class="col-md-4">
+                                {{ filtro.form.estado_venta|as_crispy_field }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ filtro.form.total_min|as_crispy_field }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ filtro.form.total_max|as_crispy_field }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ filtro.form.fecha_venta_desde|as_crispy_field }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ filtro.form.fecha_venta_hasta|as_crispy_field }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                        <a href="{{ request.path }}" type="reset" class="btn btn-warning btn-sm mt-2 ml-2">
+                            <i class="fas fa-sync"></i> Limpiar
+                        </a>
+                    </form>
+                </div>
+            </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-list mr-2"></i>Lista de Ventas</h6>
+        </div>
+        <div class="card-body">
+                <div class="form-row mb-3">
+                    <div class="ml-auto">
+                        <!-- Botón "Nuevo" en el extremo derecho -->
+                        {% if perms.ventas.crear_ventas %}
+                            <a href="{% url 'ventas:registrar_ventas' %}" class="btn btn-sm btn-primary rounded-pill">
+                                <i class="fas fa-plus-circle"></i> Registrar Venta
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="font-size: 13px;">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Fecha Emisión</th>
+                                <th>Cliente</th>
+                                <th>Emitido por</th>
+                                <th>Subtotal</th>
+                                <th>Valor IVA</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Puedes agregar o quitar filas según tus necesidades -->
+                            {% if ventas %}
+                                {% for ven in ventas %}
+                                    <tr>
+                                        <td>{{ ven.idventa }}</td>
+                                        <td>{{ ven.fecha_venta | date:"d/m/Y" }}</td>
+                                        <td>{{ven.idcliente}}</td>
+                                        <td>{{ven.user}}</td>
+                                        <td class="text-center">$ {{ven.subtotal}}</td>
+                                        <td class="text-center">$ {{ven.valoriva}}</td>
+                                        <td class="text-center">$ {{ven.total}}</td>
+                                        <td style="text-align: center;">
+                                            <span class="badge {% if ven.estado_venta == 1 %}badge-success{% elif ven.estado_venta == 0 %}badge-warning{% else %}badge-danger{% endif %}" style="color: white; font-weight: bold; font-size: 13px;">
+                                                {% if ven.estado_venta == 1 %}
+                                                    Completado
+                                                {% else %}
+                                                    No disponible
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex">
+                                                {% if perms.ventas.ver_ventas %}
+                                                <button type="button" class="btn btn-info btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver" onclick="abrir_modal_venta('{% url 'ventas:detalle_ventas' ven.idventa %}')">
+                                                    <i class="fas fa-eye fa-sm"></i>
+                                                </button>
+                                                <a class="btn btn-primary btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Generar Factura" 
+                                                    onclick="event.preventDefault(); abrirFactura('{% url 'ventas:vista_factura' ven.idventa %}')">
+                                                    <i class="fas fa-print fa-sm"></i>
+                                                </a>
+                                                <a class="btn btn-secondary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Generar Ticket" 
+                                                    onclick="event.preventDefault(); abrirFactura('{% url 'ventas:vista_ticket' ven.idventa %}')">
+                                                    <i class="fas fa-receipt fa-sm"></i>
+                                                </a>
+                                                
+                                                {% endif %}
+                                            </div>
+                                        </td>                                                                 
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            <!-- ... -->
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+
+    <!-- Modal detalle venta -->
+    <div class="modal fade" id="venta" role="dialog">
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- Abrir Modal detalle venta -->
+    <script type="text/javascript">
+        var $ =jQuery.noConflict();
+        function abrir_modal_venta(url){
+            $('#venta').load(url, function(){
+                $(this).modal('show');
+            })
+        }
+    </script>
+
+    <!-- Abrir factura -->
+    <script>
+        function abrirFactura(url) {
+            // Abre la URL en una ventana emergente con un tamaño personalizado
+            window.open(
+                url, 
+                'Factura', 
+                'width=600,height=800,scrollbars=yes,resizable=yes'
+            );
+        }
+    </script>
+{% endblock script %}

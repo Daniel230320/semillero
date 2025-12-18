@@ -1,0 +1,179 @@
+<div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content border-0 shadow-lg">
+        <!-- Encabezado -->
+        <div class="modal-header bg-light">
+            <h5 class="modal-title text-dark font-weight-bold">
+                <i class="fas fa-cash-register text-primary mr-2"></i>Información de la Venta
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true" class="text-muted">&times;</span>
+            </button>
+        </div>
+
+        <div class="modal-body p-4">
+            <!-- Pestañas -->
+            <ul class="nav nav-tabs nav-tabs-clean mb-4">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" href="#detalles">
+                        <i class="fas fa-receipt mr-2"></i> Detalles
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#productos">
+                        <i class="fas fa-box-open mr-2"></i> Productos
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Contenido -->
+            <div class="tab-content">
+                <!-- Pestaña Detalles -->
+                <div id="detalles" class="tab-pane fade show active">
+                    <div class="list-group list-group-flush details">
+                        {% if venta %}
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Concepto:</div>
+                                <div class="col-sm-8 font-weight-bold">{{ venta.concepto|default:'-' }}</div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Cliente:</div>
+                                <div class="col-sm-8 font-weight-bold">{{ venta.idcliente }}</div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Subtotal Tarifa 0%:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-dollar-sign text-secondary mr-2"></i>
+                                    <span class="font-weight-bold">{{ venta.subtotal_tarifa0 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Subtotal Tarifa 15%:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-dollar-sign text-secondary mr-2"></i>
+                                    <span class="font-weight-bold">{{ venta.subtotal_tarifa12 }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Valor IVA:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-percent text-secondary mr-2"></i>
+                                    <span class="font-weight-bold">{{ venta.valoriva }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Descuento:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-tag text-danger mr-2"></i>
+                                    <span class="font-weight-bold text-danger">{{ venta.descuento }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Subtotal:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-dollar-sign text-secondary mr-2"></i>
+                                    <span class="font-weight-bold">{{ venta.subtotal }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Total:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-dollar-sign text-success mr-2"></i>
+                                    <span class="font-weight-bold text-success">{{ venta.total }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Efectivo:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-money-bill-wave text-success mr-2"></i>
+                                    <span class="font-weight-bold">{{ pago.monto }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="list-group-item border-0 px-0 py-2">
+                            <div class="row align-items-center">
+                                <div class="col-sm-4 text-muted">Cambio:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-exchange-alt text-info mr-2"></i>
+                                    <span class="font-weight-bold">{{ cambio }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Pestaña Productos -->
+                <div id="productos" class="tab-pane fade">
+                    <div class="table-responsive">
+                        <table class="table table-hover sale-products">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th><i class="fas fa-barcode mr-2"></i>Producto</th>
+                                    <th><i class="fas fa-tags mr-2"></i>P. Venta</th>
+                                    <th><i class="fas fa-sort-amount-up mr-2"></i>Cantidad</th>
+                                    <th><i class="fas fa-tag text-danger mr-2"></i>Descuento</th>
+                                    <th><i class="fas fa-calculator mr-2"></i>Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for res in result_detalles %}
+                                <tr>
+                                    <td>{{ res.codigoarticulo }}</td>
+                                    <td>
+                                        <i class="fas fa-dollar-sign text-secondary mr-1"></i>
+                                        {{ res.preciounitario }}
+                                    </td>
+                                    <td>{{ res.cantidad }}</td>
+                                    <td class="text-danger">
+                                        <i class="fas fa-dollar-sign mr-1"></i>
+                                        {{ res.valordescuento }}
+                                    </td>
+                                    <td>
+                                        <i class="fas fa-dollar-sign text-secondary mr-1"></i>
+                                        {{ res.valor }}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CSS adicional -->
+<style>
+    .modal-content .sale-products thead th {
+        border-top: none;
+        font-weight: 600;
+        color: #495057;
+    }
+    
+    .modal-content .sale-products tbody tr {
+        transition: all 0.2s ease;
+    }
+    
+    .modal-content .sale-products tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: translateX(2px);
+    }
+</style>

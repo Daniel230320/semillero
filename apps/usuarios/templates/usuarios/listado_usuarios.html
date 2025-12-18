@@ -1,0 +1,194 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Listado de Usuarios{% endblock titulo %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Usuarios del Sistema</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Card para Filtrar -->
+    <div class="card shadow mb-2 filtercard">
+            <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+                <h6 class="m-0 font-weight-bold text-primary h5">
+                    <i class="fas fa-search mr-2"></i>Búsqueda
+                </h6>
+                <div>
+                    <a class="btn btn-sm" type="button" data-toggle="collapse" data-target="#filtroCollapse" aria-expanded="true" aria-controls="filtroCollapse" id="toggleButton">
+                        <i class="fas fa-minus"></i>
+                    </a>
+                    <a class="btn btn-sm" id="closeFilterButton">
+                        <i class="fas fa-times"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="collapse show" id="filtroCollapse">
+                <div class="card-body">
+                    {% load crispy_forms_tags %}
+                    <form method="GET" action="">
+                        <div class="row">
+                            <!-- Filtro por Nombre Completo -->
+                            <div class="col-md-4">
+                                {{ filter.form.username|as_crispy_field }}
+                            </div>
+                            <!-- Filtro por Rol -->
+                            <div class="col-md-4">
+                                {{ filter.form.groups|as_crispy_field }}
+                            </div>
+                            <!-- Filtro por Estado -->
+                            <div class="col-md-4">
+                                {{ filter.form.is_active|as_crispy_field }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm mt-2">
+                            <i class="fas fa-filter"></i> Filtrar
+                        </button>
+                        <a href="{{ request.path }}" type="reset" class="btn btn-warning btn-sm mt-2 ml-2">
+                            <i class="fas fa-sync"></i> Limpiar
+                        </a>
+                    </form>
+                </div>
+            </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-list mr-2"></i>Lista de Usuarios</h6>
+        </div>
+        <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <!-- Espacio separador (puedes ajustar el tamaño según tus preferencias) -->
+                    <div style="width: 20px;"></div>
+            
+                    <!-- Botón "Nuevo" con la clase ml-auto para alinear a la derecha -->
+                    {% if perms.usuarios.crear_usuarios %}
+                        <a href="{% url 'usuarios:registrar_usuarios' %}" class="btn btn-sm btn-primary rounded-pill ml-auto">
+                            <i class="fas fa-plus-circle"></i> Registrar Usuario
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Usuario</th>
+                                <th>Nombre Completo</th>
+                                <th>Rol</th>
+                                <th>Correo</th>
+                                <th>Último Inicio Sesión</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Puedes agregar o quitar filas según tus necesidades -->
+                            {% if usuarios %}
+                                {% for us in usuarios %}
+                                    <tr>
+                                        <td>{{ us.username }}</td>
+                                        <td>{{ us.first_name }} {{ us.last_name }}</td>
+                                        <td>
+                                            {% for group in us.groups.all %}
+                                                <i class="fas fa-user-tag mr-2"></i>{{ group.name }}
+                                                {% if not forloop.last %}, {% endif %}
+                                            {% empty %}
+                                                Sin rol asignado
+                                            {% endfor %}
+                                        </td>
+                                        <td>
+                                            <a href="mailto:{{ us.email }}">
+                                                <i class="fas fa-envelope mr-1"></i> {{ us.email }}
+                                            </a>
+                                        </td>
+                                        <td>
+                                            {% if us.last_login %}
+                                                {{ us.last_login|date:"d/m/Y h:i:s A" }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span class="badge {% if us.is_active %}badge-success{% else %}badge-danger{% endif %}" style="color: white; font-weight: bold; font-size: 13px;">
+                                                {% if us.is_active %}
+                                                    Activo
+                                                {% else %}
+                                                    Inactivo
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex">
+                                                <!-- Botón para Detalle -->
+                                                {% if perms.usuarios.ver_usuarios %}
+                                                <button type="button" class="btn btn-info btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver" onclick="abrir_modal_usuario('{% url 'usuarios:detalle_usuario' us.pk %}')">
+                                                    <i class="fas fa-eye fa-sm"></i>
+                                                </button>
+                                                {% endif %}
+                                                <!-- Botón para Editar -->
+                                                {% if perms.usuarios.editar_usuarios %}
+                                                <a href="{% url 'usuarios:editar_usuarios' us.pk %}" class="btn btn-warning btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                                    <i class="fas fa-edit fa-sm"></i>
+                                                </a>
+                                                {% endif %}
+                                                <!-- Botón para Eliminar -->
+                                                {% if perms.usuarios.eliminar_usuarios %}
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" onclick="Eliminar_Usuario({{us.pk}})">
+                                                    <i class="fas fa-trash-alt fa-sm"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>                                                        
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            <!-- ... -->
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+    
+    {% comment %} Modal detalle usuario {% endcomment %}
+    <div class="modal fade" id="usuario" role="dialog">
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- SweetAlert para confirmar la eliminación -->
+    <script>
+        function Eliminar_Usuario(id){
+            Swal.fire({
+                title: "¿Estás seguro de eliminar?",
+                text: "Esta acción no se puede deshacer",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#4169E1"
+            })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/usuarios/eliminar_usuarios/"+id+"/"
+                }
+            })
+        }
+    </script>
+
+    <!-- Abrir Modal detalle usuario -->
+    <script type="text/javascript">
+        var $ =jQuery.noConflict();
+        function abrir_modal_usuario(url){
+            $('#usuario').load(url, function(){
+                $(this).modal('show');
+            })
+        }
+    </script>
+{% endblock script %}

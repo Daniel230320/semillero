@@ -1,0 +1,286 @@
+{% load static %}
+
+<!-- Bootstrap core JavaScript-->
+<script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+<!-- Core plugin JavaScript-->
+<script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+<!-- Custom scripts for all pages-->
+<script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+<!-- Page level plugins -->
+<script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+
+
+<!-- Para tablas-->
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- DataTables Buttons JS -->
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+
+<!-- pdfmake y vfs_fonts.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<!-- Botones de exportación (PDF, Excel, CSV, Copiar) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+<script src="{% static 'js/para_tabla.js' %}"></script>
+
+<!-- Sweetalert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Notyf CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+<!-- Notyf JS -->
+<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+
+<!-- Menu desplegable -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var dropdowns = document.querySelectorAll('.dropdown');
+
+        dropdowns.forEach(function (dropdown) {
+            var toggle = dropdown.querySelector('.dropdown-toggle');
+            var menu = dropdown.querySelector('.dropdown-menu');
+
+            toggle.addEventListener('click', function (event) {
+                event.preventDefault();
+                event.stopPropagation();
+                menu.classList.toggle('show');
+            });
+
+            document.addEventListener('click', function (event) {
+                if (!dropdown.contains(event.target)) {
+                    menu.classList.remove('show');
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Inicializar tooltips de Bootstrap -->
+<script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+
+<!-- Script de SweetAlert para confirmar la modificación -->
+<script>
+    document.querySelectorAll('.botonModificar').forEach(function (button) {
+        button.addEventListener('click', function () {
+            Swal.fire({
+                title: "¿Estás seguro de modificar?",
+                text: "Esta acción no se puede deshacer",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#4169E1"
+            }).then(function (result) {
+                if (result.isConfirmed) {
+                    // Si el usuario confirma, enviar el formulario
+                    if (button.name === "editar_continuar") {
+                        var input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = "editar_continuar";
+                        input.value = "true";
+                        document.getElementById('miFormulario').appendChild(input);
+                    }
+                    document.getElementById('miFormulario').submit();
+                }
+            });
+        });
+    });
+</script>
+
+<!-- Alerta de notificaciones sin leer -->
+<script>
+    (async function () {
+        // Obtener el total de notificaciones desde el contexto de Django
+        const currentTotal = {{ total_notificaciones }};
+        const previousTotal = parseInt(localStorage.getItem('previousTotal')) || 0;
+
+        // Si el total actual es mayor que el anterior, mostrar la alerta
+        if (currentTotal > previousTotal) {
+            // Esperar 2 segundos antes de reproducir el audio y mostrar la notificación
+            setTimeout(async () => {
+                // Reproducir sonido solo si hay nuevas notificaciones sin leer
+                const audio = new Audio("{% static 'audio/notification.mp3' %}");
+                try {
+                    await audio.play(); // Espera a que el audio se reproduzca
+                } catch (error) {
+                    console.error("Error al reproducir el audio:", error);
+                }
+
+                // Mostrar la notificación con NotyF
+                new Notyf({
+                    duration: 3000,
+                    position: {
+                        x: 'right',
+                        y: 'top'
+                    },
+                    types: [
+                        {
+                            type: 'info',
+                            background: '#0dcaf0',
+                            icon: {
+                                className: 'fas fa-bell',
+                                tagName: 'i',
+                                color: '#fff'
+                            }
+                        }
+                    ]
+                }).open({
+                    type: 'info',
+                    message: '¡Tienes {{ total_notificaciones }} notificación(es) nueva(s) sin leer! Revisa tus notificaciones para más detalles.'
+                });
+
+                // Actualizar el total anterior en localStorage
+                localStorage.setItem('previousTotal', currentTotal);
+            }, 3000); // 3000 milisegundos = 3 segundos
+        }
+        if (previousTotal > currentTotal) {
+            // Actualizar el total anterior en localStorage
+            localStorage.setItem('previousTotal', currentTotal);
+        }
+    }) ();
+</script>
+
+<!-- Animación de icono de campana de las notificaciones -->
+<script>
+    // Verificar si hay notificaciones
+    const totalNotificaciones = {{ total_notificaciones }};
+    const campanita = document.getElementById('campanita');
+
+    if (totalNotificaciones > 0) {
+        // Función para activar la animación
+        function activarVibracion() {
+            campanita.classList.add('ring'); // Aplicar la clase de animación
+            setTimeout(() => {
+                campanita.classList.remove('ring'); // Detener la animación después de 0.5 segundos
+            }, 1000); // Duración de la animación
+        }
+
+        // Activar la vibración cada 15 segundos
+        setInterval(activarVibracion, 4000); // 15000 ms = 15 segundos
+
+        // Activar la vibración inmediatamente al cargar la página
+        activarVibracion();
+    }
+</script>
+
+<!-- Alertas de success y errors -->
+<script>
+    const notyf = new Notyf({
+        duration: 3000,
+        position: {
+            x: 'right',
+            y: 'bottom',
+        },
+        dismissible: true
+    });
+
+    {% if messages %}
+        {% for m in messages %}
+            {% if m.tags == 'success' %}
+                notyf.success("{{ m|escapejs }}");
+            {% elif m.tags == 'error' %}
+                notyf.error("{{ m|escapejs }}");
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>
+
+<!-- Colapsado/expandido para card de busquedas -->
+<script>
+    const toggleButton = document.getElementById('toggleButton');
+    const collapseElement = document.getElementById('filtroCollapse');
+    $(document).ready(function () {
+        // Evento cuando se expande
+        $('#filtroCollapse').on('show.bs.collapse', function () {
+            toggleButton.innerHTML = '<i class="fas fa-minus"></i>';
+        });
+        // Evento cuando se colapsa
+        $('#filtroCollapse').on('hide.bs.collapse', function () {
+            toggleButton.innerHTML = '<i class="fas fa-plus"></i>';
+        });
+        // Función para quitar el card al hacer clic en "X"
+        const closeFilterButton = document.getElementById("closeFilterButton");
+        closeFilterButton.addEventListener("click", function (event) {
+            event.preventDefault();
+            $(".filtercard").slideUp(500, function () {
+                $(this).remove();
+            });
+        });
+    });
+</script>
+
+<!-- Select2 para campos de select -->
+<script>
+    $(document).ready(function () {
+        $('.custom-select').not('.dataTables_wrapper .custom-select').select2({
+            theme: 'bootstrap4',
+            allowClear: false,
+            width: '100%',
+            language: {
+                noResults: function () {
+                    return 'No se encontraron resultados';
+                },
+            }
+        });
+        
+        $('.custom-select').on('select2:open', function() {
+            // Localizar el campo de búsqueda existente
+            const searchField = $('.select2-search__field');
+            
+            // Crear contenedor flexible (si no existe)
+            if(!$('.select2-search').hasClass('has-icon')) {
+                $('.select2-search')
+                    .addClass('has-icon')
+                    .css({
+                        'display': 'flex',
+                        'align-items': 'center',
+                        'padding-left': '10px'
+                    });
+                
+                // Insertar la lupa antes del campo
+                $('<i class="fas fa-search text-muted mr-2"></i>')
+                    .insertBefore(searchField);
+                
+                // Ajustar el campo de búsqueda
+                searchField.css('padding-left', '5px');
+            }
+        });
+    });
+</script>
+
+<!-- Abrir Modal detalle notificacion -->
+<script type="text/javascript">
+    var $ = jQuery.noConflict();
+    function abrir_modal_notificacion(url){
+        $('#notificationModal').load(url, function(){
+            // Inicializa el modal
+            $(this).modal('show');
+            
+            // Fix adicional para el botón de cerrar
+            $(this).find('.close').click(function() {
+                $('#notificationModal').modal('hide');
+            });
+        });
+    }
+</script>

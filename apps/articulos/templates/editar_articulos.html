@@ -1,0 +1,438 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Editar Productos{% endblock titulo %}
+{% load static %}
+
+{% block contenido %}
+<!-- Page Heading -->
+<div class="mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Editar Productos</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'articulos:listado_articulos' %}">Productos</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Editar Producto</li>
+        </ol>
+    </nav>
+</div>
+
+<!-- DataTales Example -->
+<div class="card shadow mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+        <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-edit mr-2"></i>Editar Productos</h6>
+    </div>
+    <div class="card-body">
+        <div class="row">
+
+            <!-- Card para la imagen - Estilo mejorado -->
+            <div class="col-md-4">
+                <div class="card mb-4 border-1 shadow-sm" style="border-radius: 12px; overflow: hidden;">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0 text-dark font-weight-bold">
+                            <i class="fas fa-box-open text-primary mr-2"></i>Imagen del Producto
+                        </h6>
+                    </div>
+                    <div class="card-body text-center p-4">
+                        <!-- Contenedor de carga -->
+                        <div id="loading-message" style="display: none; color: #666; font-style: italic; font-weight: bold;">
+                            Cargando...
+                        </div>
+
+                        <!-- Contenedor de imagen con hover -->
+                        <div class="image-container position-relative" style="width: 100%; height: 180px;">
+                            {% if articulo.imagen %}
+                                <img id="product-image" 
+                                    src="{{ articulo.imagen.url }}" 
+                                    alt="{{ articulo.descripcion_articulo }}" 
+                                    class="img-fluid h-100 w-auto mx-auto"
+                                    style="object-fit: contain; border: 1px dashed #dee2e6; border-radius: 8px; padding: 8px; background: white; transition: all 0.3s ease;">
+                            {% else %}
+                                <img id="product-image" 
+                                    src="{% static 'img/product.png' %}" 
+                                    alt="{{ articulo.descripcion_articulo }}"
+                                    class="img-fluid h-100 w-auto mx-auto"
+                                    style="object-fit: contain; border: 1px dashed #dee2e6; border-radius: 8px; padding: 8px; background: white; transition: all 0.3s ease;">
+                            {% endif %}
+                            <div class="hover-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.05); border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity 0.3s ease;"></div>
+                        </div>
+
+                        <!-- Descripción -->
+                        <h5 class="text-muted mt-3 mb-0">{{ articulo.descripcion_articulo }}</h5>
+                        
+                        <!-- Texto de ayuda (opcional) -->
+                        <small class="text-muted mt-2 d-block" style="font-size: 0.75rem;">
+                            Formatos soportados: JPG, PNG (Max. 4MB)
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card para el formulario -->
+            <div class="col-md-8">
+                <div class="card mb-4 border-1 shadow-sm">
+
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0 text-dark font-weight-bold">
+                            <i class="fas fa-cube text-primary mr-2"></i>Formulario de Edición
+                        </h6>
+                    </div>
+
+                    <div class="card-body">
+                        {% load crispy_forms_tags %}
+                        <form method="POST" action="" enctype="multipart/form-data" id="miFormulario">
+                            {% csrf_token %}
+
+                            <!-- Sección Imagen -->
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-image fa-lg text-info mr-2"></i>
+                                    <h6 class="mb-0 text-info font-weight-bold">Imagen del Producto</h6>
+                                </div>
+                                <hr class="mt-2 mb-3">
+                                
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        {{ form.imagen|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Sección General -->
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-info-circle text-info mr-2"></i>
+                                    <h6 class="mb-0 text-info font-weight-bold">Información General</h6>
+                                </div>
+                                <hr class="mt-2 mb-3">
+                                
+                                <!-- Campos generales -->
+                                <div class="form-row">
+                                    <div class="form-group col-md-12">
+                                        {{ form.descripcion_articulo|as_crispy_field }}
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        {{ form.codigoarticulo|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {{ form.codigo_barras|as_crispy_field }}
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        {{ form.estado_articulo|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {{ form.idcategoriaarticulo|as_crispy_field }}
+                                    </div>
+                                </div>
+
+                                <!-- Tipo de producto -->
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <label>Tipo de producto<span class="asteriskField">*</span></label><br>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="idtipoarticulo_0" name="idtipoarticulo"
+                                                class="custom-control-input" value="1"
+                                                {% if form.idtipoarticulo.value|stringformat:"s" == '1' %}checked{% endif %}>
+                                            <label class="custom-control-label" for="idtipoarticulo_0">Comestible</label>
+                                        </div>
+                                        <div class="custom-control custom-radio custom-control-inline">
+                                            <input type="radio" id="idtipoarticulo_1" name="idtipoarticulo"
+                                                class="custom-control-input" value="2"
+                                                {% if form.idtipoarticulo.value|stringformat:"s" != '1' %}checked{% endif %}>
+                                            <label class="custom-control-label" for="idtipoarticulo_1">No Comestible</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-row d-none" id="opcion-tabla-nutricional">
+                                    <div class="form-group col-md-6">
+                                        <div class="custom-control custom-checkbox">
+                                            {{ form.tiene_semaforo }}
+                                            <label class="custom-control-label" for="id_tiene_semaforo">Habilitar Semáforo Nutricional</label>
+                                        </div>
+                                        {% if form.tiene_semaforo.errors %}
+                                        <small class="text-danger font-weight-bold">
+                                            {{ form.tiene_semaforo.errors|first }}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Tabla nutricional-->
+                                <div id="tabla-nutricional-card" class="card border-left-success shadow-sm {% if not form.tiene_semaforo.value %}d-none{% endif %}">
+                                    <div class="card-header bg-success text-white font-weight-bold">
+                                        <i class="fas fa-traffic-light mr-2"></i> Semáforo Nutricional
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="form-row">
+                                            <div class="form-group col-md-4">
+                                                {{ form.idnivelsal|as_crispy_field }}
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                {{ form.idnivelgrasa|as_crispy_field }}
+                                            </div>
+                                            <div class="form-group col-md-4">
+                                                {{ form.idnivelazucar|as_crispy_field }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- Sección Financiera -->
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-tags text-info mr-2"></i>
+                                    <h6 class="mb-0 text-info font-weight-bold">Información Financiera</h6>
+                                </div>
+                                <hr class="mt-2 mb-3">
+                                
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        {{ form.idgiva|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {{ form.utilidad|as_crispy_field }}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        {{ form.costo|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {{ form.precioventa|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sección Inventario -->
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-warehouse text-info mr-2"></i>
+                                    <h6 class="mb-0 text-info font-weight-bold">Gestión de Inventario</h6>
+                                </div>
+                                <hr class="mt-2 mb-3">
+                                
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        <div class="custom-control custom-checkbox">
+                                            {{ form.tiene_fecha_caduca }}
+                                            <label class="custom-control-label" for="id_tiene_fecha_caduca">¿Tiene fecha de caducidad?</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <div class="custom-control custom-checkbox">
+                                            {{ form.manejo_por_lotes }}
+                                            <label class="custom-control-label" for="id_manejo_por_lotes">¿Se maneja por lotes?</label>
+                                        </div>
+                                        {% if form.manejo_por_lotes.errors %}
+                                        <small class="text-danger font-weight-bold">
+                                            {{ form.manejo_por_lotes.errors|first }}
+                                        </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group col-md-6">
+                                        {{ form.stock_minimo|as_crispy_field }}
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        {{ form.stock_maximo|as_crispy_field }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sección Botones -->
+                            <div class="mt-3 d-flex justify-content-end">
+                                <button type="button" class="btn btn-sm btn-primary botonModificar">
+                                    <i class="fas fa-save"></i> Editar
+                                </button>
+                                <button type="button" name="editar_continuar" class="btn btn-sm btn-success ml-2 botonModificar">
+                                    <i class="fas fa-save"></i> Editar y Continuar
+                                </button>
+                                <a href="{{ request.path }}" type="reset" class="btn btn-warning btn-sm ml-2">
+                                    <i class="fas fa-sync"></i> Limpiar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- Manejar el evento de cambio en el campo de precio venta -->
+    <script>
+        $(document).ready(function() {
+            // Manejar el evento de cambio en el campo
+            $('#id_utilidad').on('input', actualizarPrecioVenta);
+            $('#id_costo').on('input', actualizarPrecioVenta);
+
+            function actualizarPrecioVenta() {
+                var utilidad = parseFloat($('#id_utilidad').val()) || 0;
+                var costo = parseFloat($('#id_costo').val()) || 0;
+                var precioVenta = costo / (1 - utilidad / 100);
+
+                // Actualizar el valor del campo de precio de venta
+                $('#id_precioventa').val(precioVenta.toFixed(2));
+            }
+        });
+    </script>
+
+    <!-- Manejar el cambio en el input de la imagen -->
+    <script>
+        $(document).ready(function() {
+            $('#id_imagen').change(function() {
+                const file = this.files[0];
+                const imageElement = $('#product-image');
+                const loadingMessage = $('#loading-message'); // Asegúrate de que este elemento exista en tu HTML
+                let defaultImage = "{% static 'img/product.png' %}";
+                {% if articulo.imagen %}
+                    defaultImage = "{{ articulo.imagen.url }}";
+                {% endif %}
+
+                if (file) {
+                    // Mostrar el mensaje de "Cargando..."
+                    loadingMessage.show();
+                    imageElement.hide();
+
+                    // Simular un tiempo de carga (2 segundos)
+                    setTimeout(function() {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            loadingMessage.hide();
+                            imageElement.attr('src', e.target.result).show();
+                        };
+                        reader.readAsDataURL(file);
+                    }, 2000); // 2000 milisegundos = 2 segundos
+                } else {
+                    // Restablecer la imagen por defecto
+                    loadingMessage.hide();
+                    imageElement.attr('src', defaultImage).show();
+                }
+            });
+        });
+    </script>
+
+    <!-- Manejar el cambio en checkbox de manejo por lotes -->
+    <script>
+        $(document).ready(function () {
+            // Obtener los checkboxes
+            let tieneFechaCaduca = $("#id_tiene_fecha_caduca");
+            let manejoPorLotes = $("#id_manejo_por_lotes");
+
+            // Evento al cambiar "tiene_fecha_caduca"
+            tieneFechaCaduca.change(function () {
+                if (this.checked) {
+                    manejoPorLotes.prop("checked", true);
+                }
+            });
+        });
+    </script>
+
+    <!-- Manejar el cambio en checkbox de tabla nutricional-->
+    <script>
+        // Crear un asterisco nuevo para cada label
+        const createAsterisk = () => {
+            const asterisk = document.createElement('span');
+            asterisk.classList.add('asteriskField');
+            asterisk.textContent = '*';
+            return asterisk;
+        };
+
+        // Función para verificar el estado del checkbox tiene semaforo nutricional
+        const checkNutricional = (checkbox) => {
+            const arregloNiveles = [
+                document.getElementById('id_idnivelsal'), 
+                document.getElementById('id_idnivelgrasa'), 
+                document.getElementById('id_idnivelazucar')
+            ];
+            const arregloLabels = [
+                document.querySelector('label[for="id_idnivelsal"]'), 
+                document.querySelector('label[for="id_idnivelgrasa"]'), 
+                document.querySelector('label[for="id_idnivelazucar"]')
+            ];
+
+            if (checkbox.checked) {
+                arregloNiveles.forEach(element => element.required = true);
+                arregloLabels.forEach(element => element.appendChild(createAsterisk()));
+
+            } else {
+                // Limpiar los valores de los select
+                arregloNiveles.forEach(element => {
+                    element.removeAttribute('required');
+                    if ($(element).hasClass('select2-hidden-accessible')) {
+                        $(element).val('').trigger('change');
+                    }
+                });
+            
+                // Eliminar los asteriscos de los labels
+                arregloLabels.forEach(element => {
+                    if (element.querySelector('.asteriskField')) {
+                        element.removeChild(element.querySelector('.asteriskField'));
+                    }
+                });
+            }
+        }
+
+        // Esperar a que el DOM esté completamente cargado
+        document.addEventListener('DOMContentLoaded', function () {
+            const checkbox = document.getElementById('id_tiene_semaforo');
+            const cardNutricional = document.getElementById('tabla-nutricional-card');
+            // Establecer el estado inicial del checkbox
+            checkNutricional(checkbox);
+
+            // Escuchar el evento de cambio en el checkbox tiene semaforo nutricional
+            checkbox.addEventListener('change', function () {
+                if (checkbox.checked) {
+                    cardNutricional.classList.remove('d-none');
+                    checkNutricional(checkbox);
+                } else {
+                    cardNutricional.classList.add('d-none');
+                    checkNutricional(checkbox);
+                }
+            });
+        });
+    </script>
+
+    <!-- Script para mostrar/ocultar card semaforo nutricional -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const radioComestible = document.getElementById('idtipoarticulo_0');
+            const radioNoComestible = document.getElementById('idtipoarticulo_1');
+            const opcionNutricional = document.getElementById('opcion-tabla-nutricional');
+            const cardNutricional = document.getElementById('tabla-nutricional-card');
+
+            function toggleNutricional() {
+                if (radioComestible.checked) {
+                    opcionNutricional.classList.remove('d-none');
+                    document.getElementById('id_tiene_semaforo').required = true;
+                } else {
+                    opcionNutricional.classList.add('d-none');
+                    cardNutricional.classList.add('d-none');
+                    document.getElementById('id_tiene_semaforo').checked = false;
+                    document.getElementById('id_tiene_semaforo').required = false;
+                    checkNutricional(document.getElementById('id_tiene_semaforo').checked);
+                }
+            }
+
+            radioComestible.addEventListener('change', toggleNutricional);
+            radioNoComestible.addEventListener('change', toggleNutricional);
+
+            toggleNutricional(); // Ejecutar al cargar la página
+        });
+    </script>
+
+
+    <!-- Mejorar diseño campo seleccion archivo -->
+    <script src="{% static 'js/components/campo_file.js' %}"></script>
+{% endblock script %}

@@ -1,0 +1,296 @@
+{% extends "inventario_principal/base.html" %}
+{% load static %}
+
+{% block titulo %}Perfil de Usuario{% endblock titulo %}
+
+{% block extra_links %}
+    <link rel="stylesheet" href="{% static 'css/pages/user_perfil.css' %}">
+{% endblock extra_links %}
+
+{% block contenido %}
+<!-- Page Heading (sin cambios) -->
+<div class="mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Perfil del Usuario</h1>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+            <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Perfil Usuario</li>
+        </ol>
+    </nav>
+</div>
+
+<div class="card shadow mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+        <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-user-cog mr-2"></i>Configuración de la Cuenta</h6>
+    </div>
+    <div class="card-body bg-light">
+        <div class="row">
+
+            <!-- Card para el perfil (solo cambios internos) -->
+            <div class="col-xl-4">
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="profile-card-content text-center">
+                        <!-- Icono de usuario mejorado -->
+                        <div class="profile-avatar">
+                            <i class="fas fa-user-circle fa-lg"></i>
+                        </div>
+        
+                        <!-- Nombre del administrador -->
+                        <h4 class="profile-username">{{request.user.username}}</h4>
+        
+                        <!-- Descripción -->
+                        <p class="profile-name">{{ request.user.first_name }} {{ request.user.last_name }}</p>
+        
+                        <!-- Botones descriptivos mejorados -->
+                        <div class="profile-actions">
+                            <button class="btn btn-info btn-sm">
+                                <i class="fas fa-cog mr-1"></i> Configurar
+                            </button>
+                            
+                            <a href="{% url 'usuarios:cuenta_perfil' %}">
+                                <button class="btn btn-secondary btn-sm mt-2">
+                                    <i class="fas fa-user-edit mr-1"></i> Editar Perfil
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card para informacion general y formulario -->
+            <div class="col-xl-8">
+                <div class="card mb-4 border-0 shadow-sm">
+                    <div class="card-body">
+                        
+                        <!-- Bordered Tabs (sin cambios) -->
+                        <ul class="nav nav-tabs nav-tabs-bordered">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#profile-overview">
+                                    <i class="fas fa-info-circle mr-2"></i>Descripción General
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#profile-edit">
+                                    <i class="fas fa-user-edit mr-2"></i>Editar Perfil
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#profile-change-password">
+                                    <i class="fas fa-key mr-2"></i>Cambiar Contraseña
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Navegacion -->
+                        <div class="tab-content pt-2">
+
+                            <!-- Navegacion Informacion Personal (mejorada) -->
+                            <div class="tab-pane container active pt-4" id="profile-overview">
+                                <h5 class="card-title text-dark font-weight-bold mb-4">Detalles del Perfil</h5>
+                                
+                                <!-- Nombre Completo -->
+                                <div class="profile-info-card card mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                                                <span class="profile-info-icon">
+                                                    <i class="fas fa-user-circle fa-sm"></i>
+                                                </span>
+                                                <span class="profile-info-label">Nombre:</span>
+                                            </div>
+                                            <div class="col-lg-9 col-md-8 profile-info-value">
+                                                {{ request.user.first_name }} {{ request.user.last_name }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Empresa -->
+                                <div class="profile-info-card card mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                                                <span class="profile-info-icon">
+                                                    <i class="fas fa-building fa-sm"></i>
+                                                </span>
+                                                <span class="profile-info-label">Empresa:</span>
+                                            </div>
+                                            <div class="col-lg-9 col-md-8 profile-info-value">
+                                                MULTICOMERCIO
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Rol -->
+                                <div class="profile-info-card card mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                                                <span class="profile-info-icon">
+                                                    <i class="fas fa-user-tag fa-sm"></i>
+                                                </span>
+                                                <span class="profile-info-label">Rol:</span>
+                                            </div>
+                                            <div class="col-lg-9 col-md-8 profile-info-value">
+                                                {% if request.user.is_superuser %}
+                                                    Administrador Principal
+                                                {% else %}
+                                                    {% for group in request.user.groups.all %}
+                                                        {{ group.name }}
+                                                        {% if not forloop.last %}, {% endif %}
+                                                    {% empty %}
+                                                        Sin rol asignado
+                                                    {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- País -->
+                                <div class="profile-info-card card mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                                                <span class="profile-info-icon">
+                                                    <i class="fas fa-globe fa-sm"></i>
+                                                </span>
+                                                <span class="profile-info-label">País:</span>
+                                            </div>
+                                            <div class="col-lg-9 col-md-8 profile-info-value">
+                                                Ecuador
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Dirección -->
+                                <div class="profile-info-card card mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                                                <span class="profile-info-icon">
+                                                    <i class="fas fa-map-marker-alt fa-sm"></i>
+                                                </span>
+                                                <span class="profile-info-label">Dirección:</span>
+                                            </div>
+                                            <div class="col-lg-9 col-md-8 profile-info-value">
+                                                {{ request.user.direccion|default_if_none:' - ' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Teléfono -->
+                                <div class="profile-info-card card mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                                                <span class="profile-info-icon">
+                                                    <i class="fas fa-phone fa-sm"></i>
+                                                </span>
+                                                <span class="profile-info-label">Teléfono:</span>
+                                            </div>
+                                            <div class="col-lg-9 col-md-8 profile-info-value">
+                                                {{ request.user.telefono|default_if_none:' - ' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="profile-info-card card mb-3">
+                                    <div class="card-body py-3">
+                                        <div class="row align-items-center">
+                                            <div class="col-lg-3 col-md-4 d-flex align-items-center">
+                                                <span class="profile-info-icon">
+                                                    <i class="fas fa-envelope fa-sm"></i>
+                                                </span>
+                                                <span class="profile-info-label">Email:</span>
+                                            </div>
+                                            <div class="col-lg-9 col-md-8 profile-info-value">
+                                                {{ request.user.email }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navegacion Editar Perfil (sin cambios) -->
+                            <div class="tab-pane container pt-2" id="profile-edit">
+                                {% load crispy_forms_tags %}
+                                <form method="POST" action="">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="form-group col-md-5">
+                                            {{ user_form.username | as_crispy_field }}
+                                        </div>
+                                        <div class="form-group col-md-7">
+                                            {{ user_form.email | as_crispy_field }}
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            {{ user_form.first_name | as_crispy_field }}
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ user_form.last_name | as_crispy_field }}
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-6">
+                                            {{ user_form.telefono | as_crispy_field }}
+                                        </div>
+                                        <div class="form-group col-md-6">
+                                            {{ user_form.celular | as_crispy_field }}
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        {{ user_form.direccion | as_crispy_field }}
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" name="update_info" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-save"></i> Guardar Información
+                                        </button>
+                                        <button type="reset" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-eraser"></i> Deshacer
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Navegacion Editar Contraseña (sin cambios) -->
+                            <div class="tab-pane container pt-2" id="profile-change-password">
+                                <form method="POST" action="">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            {{ password_form.old_password | as_crispy_field }}
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            {{ password_form.new_password1 | as_crispy_field }}
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col-md-12">
+                                            {{ password_form.new_password2 | as_crispy_field }}
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" name="change_password" class="btn btn-sm btn-primary">
+                                            <i class="fas fa-save"></i> Cambiar Contraseña
+                                        </button>  
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock contenido %}

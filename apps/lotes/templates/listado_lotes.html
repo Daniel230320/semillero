@@ -1,0 +1,157 @@
+{% extends "inventario_principal/base.html" %}
+{% block titulo %}Listado de Lotes{% endblock titulo %}
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Productos por Lotes</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Lotes</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Card para Filtrar Lotes por Producto -->
+    <div class="card shadow mb-2 filtercard">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5">
+                <i class="fas fa-search mr-2"></i>Filtrar por producto
+            </h6>
+            <div>
+                <!-- Botón de Colapsado/Expandido -->
+                <a class="btn btn-sm" type="button" data-toggle="collapse" data-target="#filtroCollapse" aria-expanded="true" aria-controls="filtroCollapse" id="toggleButton">
+                    <i class="fas fa-minus"></i>
+                </a>
+                <!-- Botón X (Cerrar filtro) -->
+                <a class="btn btn-sm" id="closeFilterButton">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </div>
+        <div class="collapse show" id="filtroCollapse"> <!-- Contenido colapsable (inicialmente abierto) -->
+            <div class="card-body">
+                {% load crispy_forms_tags %} 
+                <form method="GET" action="">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ filtro_lotes.form.producto|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ filtro_lotes.form.estado|as_crispy_field }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                    <a href="{{ request.path }}" type="reset" class="btn btn-warning btn-sm mt-2 ml-2">
+                        <i class="fas fa-sync"></i> Limpiar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-2">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5">
+                <i class="fas fa-boxes mr-2"></i>Información de los Lotes
+            </h6>
+        </div>
+        <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Número/Código de Lote</th>
+                                <th>Fecha Fabricación</th>
+                                <th>Fecha Caducidad</th>
+                                <th>Dias Disponibles</th>
+                                <th>Cantidad</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Puedes agregar o quitar filas según tus necesidades -->
+                            {% if lotes %}
+                                {% for lot in lotes %}
+                                    <tr>
+                                        <td class="col-2">
+                                            <div class="d-flex flex-column">
+                                                <span class="fw-bold">{{ lot.codigoarticulo.descripcion_articulo }}</span>
+                                                <span class="text-muted small">{{ lot.codigoarticulo.codigoarticulo }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="col-2">{{ lot.numero_lote }}</td>
+                                        <td>
+                                            {% if lot.fecha_fabricacion %}
+                                                {{ lot.fecha_fabricacion | date:"d/m/Y" }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if lot.fecha_caducidad %}
+                                                {{ lot.fecha_caducidad | date:"d/m/Y" }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {% if lot.dias_disponibles is not None and lot.idestado_lote.code_estado_lote != 'consumido' %}
+                                                <span class="badge {% if lot.idestado_lote.code_estado_lote == 'vigente' %}bg-success{% elif lot.idestado_lote.code_estado_lote == 'por_vencer' %}bg-warning{% elif lot.idestado_lote.code_estado_lote == 'vencido' %}bg-danger{% endif %}" style="color: white; font-weight: bold; font-size: 13px;">
+                                                    {% if lot.dias_disponibles < 0 %}
+                                                        0 días
+                                                    {% else %}
+                                                        {{ lot.dias_disponibles }} días
+                                                    {% endif %}
+                                                </span>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ lot.cantidad }}</td>
+                                        <td style="text-align: center;">
+                                            <span class="badge {% if lot.idestado_lote.code_estado_lote == 'vigente' %}bg-success{% elif lot.idestado_lote.code_estado_lote == 'por_vencer' %}bg-warning{% elif lot.idestado_lote.code_estado_lote == 'vencido' %}bg-danger{% elif lot.idestado_lote.code_estado_lote == 'consumido' %}bg-primary{% else %}bg-secondary{% endif %}" style="color: white; font-weight: bold; font-size: 13px;">
+                                                {{ lot.idestado_lote }}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex">
+                                                <!-- Botón para Editar -->
+                                                {% if perms.lotes.editar_lotes %}
+                                                <button type="button" class="btn btn-warning btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" onclick="abrir_modal_editar('{% url 'lotes:editar_lotes' lot.idlote %}')">
+                                                    <i class="fas fa-edit fa-sm"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>                                             
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            <!-- ... -->
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+
+    <!-- Modal editar -->
+    <div class="modal fade" id="editar" role="dialog">
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- Abrir Modal editar lote -->
+    <script type="text/javascript">
+        var $ =jQuery.noConflict();
+        function abrir_modal_editar(url){
+            $('#editar').load(url, function(){
+                $(this).modal('show');
+            })
+        }
+    </script>
+{% endblock script %}

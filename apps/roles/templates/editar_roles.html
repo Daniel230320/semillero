@@ -1,0 +1,27 @@
+<div class="modal-dialog modal-custom-width" role="document">
+    <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header bg-light">
+            <h5 class="modal-title text-dark font-weight-bold">
+                <i class="fas fa-edit text-primary mr-2"></i>Editar Rol
+            </h5>
+            <button class="close" type="button" data-dismiss="modal" area-label="close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% load crispy_forms_tags %}
+                <form method="POST" action="{% url 'roles:editar_roles' pk %}">
+                    {% csrf_token %}
+                    {{ form | crispy }}
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-sm btn-primary" id="botonModificar">
+                            <i class="fas fa-save"></i> Guardar
+                        </button>
+                        <button type="reset" class="btn btn-sm btn-warning ml-2">
+                            <i class="fas fa-undo"></i> Deshacer
+                        </button>  
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,123 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Listado de Categorias{% endblock titulo %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Categorías de Productos</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Categorías</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-list mr-2"></i>Lista de Categorias</h6>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between mb-3">
+                <!-- Espacio separador (puedes ajustar el tamaño según tus preferencias) -->
+                <div style="width: 20px;"></div>
+            
+                <!-- Botón "Nuevo" con la clase ml-auto para alinear a la derecha -->
+                {% if perms.categorias.crear_categorias %}
+                    <button onclick="abrir_modal_nuevo('{% url 'categorias:registrar_categorias' %}')" class="btn btn-sm btn-primary rounded-pill ml-auto">
+                        <i class="fas fa-plus-circle"></i> Registrar Categoría
+                    </button>
+                {% endif %}
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Descripción</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Puedes agregar o quitar filas según tus necesidades -->
+                        {% if categorias %}
+                            {% for cat in categorias %}
+                                <tr>
+                                    <td>{{cat.descripcion_categoriaarticulo}}</td>
+                                       <td class="text-center">
+                                            <div class="d-flex">
+                                                <!-- Botón para Editar -->
+                                                {% if perms.categorias.editar_categorias %}
+                                                <button class="btn btn-warning btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar" onclick="abrir_modal_editar('{% url 'categorias:editar_categorias' cat.idcategoriaarticulo %}')">
+                                                    <i class="fas fa-edit fa-sm"></i>
+                                                </button>
+                                                {% endif %}
+                                                <!-- Botón para Eliminar -->
+                                                {% if perms.categorias.eliminar_categorias %}
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" onclick="Eliminar_Categoria({{cat.idcategoriaarticulo}})">
+                                                    <i class="fas fa-trash-alt fa-sm"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>                                               
+                                </tr>
+                            {% endfor %}
+                        {% endif %}
+                        <!-- ... -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal nuevo -->
+    <div class="modal fade" id="nuevo" role="dialog">
+    </div>
+
+    <!-- Modal editar -->
+    <div class="modal fade" id="editar" role="dialog">
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- SweetAlert para confirmar la eliminación -->
+    <script>
+        function Eliminar_Categoria(id){
+            Swal.fire({
+                title: "¿Estás seguro de eliminar?",
+                text: "Esta acción no se puede deshacer",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#4169E1"
+            })
+            .then(function(result){
+                if(result.isConfirmed){
+                    window.location.href = "/categorias/eliminar_categorias/"+id+"/"
+                }
+            })
+        }
+    </script>
+
+    <!-- Abrir Modal nuevo -->
+    <script type="text/javascript">
+        var $ =jQuery.noConflict();
+        function abrir_modal_nuevo(url){
+            $('#nuevo').load(url, function(){
+                $(this).modal('show');
+            })
+        }
+    </script>
+
+    <!-- Abrir Modal editar -->
+    <script type="text/javascript">
+        var $ =jQuery.noConflict();
+        function abrir_modal_editar(url){
+            $('#editar').load(url, function(){
+                $(this).modal('show');
+            })
+        }
+    </script>
+{% endblock script %}

@@ -1,0 +1,153 @@
+{% extends "inventario_principal/base.html" %}
+{% load static %}
+
+{% block titulo %}Reportes Disponibles{% endblock titulo %}
+
+{% block extra_links %}
+    <link rel="stylesheet" href="{% static 'css/pages/info_inicio.css' %}">
+{% endblock extra_links %}
+
+{% block contenido %}
+    <!-- Page Heading - Breadcrumb SIN MODIFICACIONES -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Reportes Disponibles</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Reportes</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Información para el usuario - versión mejorada pero discreta -->
+    <div class="custom-alert mb-4 d-flex align-items-center">
+        <i class="fas fa-info-circle mr-3"></i>
+        <div>
+            <strong class="d-block mb-1">Explora reportes</strong>
+            <span class="d-block">Selecciona cualquier reporte para acceder a información clara, organizada y con un análisis detallado de tus datos.</span>
+        </div>
+    </div>
+
+    <!-- Cards Grid - Versión mejorada -->
+    <div class="row">
+        <!-- Reporte Compras -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2 hover-animate">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="card-title text-primary text-uppercase">
+                                REPORTE DE COMPRAS
+                            </div>
+                            <div class="card-description">
+                                Detalle completo de compras con filtros por fechas, proveedores y usuarios.
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="card-icon-container card-icon-primary">
+                                <i class="fas fa-shopping-cart card-icon"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'informe:reporte_compras' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte Ventas -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2 hover-animate">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="card-title text-success text-uppercase">
+                                REPORTE DE VENTAS
+                            </div>
+                            <div class="card-description">
+                                Análisis detallado de ventas por período, vendedores, y clientes.
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="card-icon-container card-icon-success">
+                                <i class="fas fa-chart-line card-icon text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'informe:reporte_ventas' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte Inventario -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2 hover-animate">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="card-title text-warning text-uppercase">
+                                REPORTE DE INVENTARIO
+                            </div>
+                            <div class="card-description">
+                                Estado actual del stock con niveles mínimos/máximos, y análisis de rotación.
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="card-icon-container card-icon-warning">
+                                <i class="fas fa-boxes card-icon text-warning"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'informe:reporte_inventario' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte Kardex -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2 hover-animate">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="card-title text-info text-uppercase">
+                                REPORTE DE KARDEX
+                            </div>
+                            <div class="card-description">
+                                Historial completo de movimientos por producto: entradas, salidas, costos y existencias.
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="card-icon-container card-icon-info">
+                                <i class="fas fa-clipboard-list card-icon text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'informe:reporte_kardex' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reporte Productos Caducos -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2 hover-animate">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="card-title text-danger text-uppercase">
+                                REPORTE DE PRODUCTOS CADUCOS
+                            </div>
+                            <div class="card-description">
+                                Detalle de productos próximos a caducar o vencidos con filtros por fechas y categorías.
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="card-icon-container card-icon-danger">
+                                <i class="fas fa-calendar-times card-icon text-danger"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="{% url 'informe:reporte_caducos' %}" class="stretched-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock contenido %}

@@ -1,0 +1,95 @@
+/* ==============================
+   ESTILO MODERNO INFORME VISTA PRINCIPAL
+   ============================= */
+
+.hover-animate {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.hover-animate:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Badges personalizados */
+.badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.35em 0.65em;
+}
+
+/* Colores adicionales */
+.bg-blue-100 {
+    background-color: #DBEAFE;
+}
+
+.text-blue-800 {
+    color: #1E40AF;
+}
+
+.bg-yellow-100 {
+    background-color: #FEF3C7;
+}
+
+.text-yellow-800 {
+    color: #92400E;
+}
+
+.bg-purple-100 {
+    background-color: #EDE9FE;
+}
+
+.text-purple-800 {
+    color: #5B21B6;
+}
+
+/* Alert moderno - Versión mejorada pero discreta */
+.custom-alert {
+    background-color: #ffffff;
+    border-left: 4px solid #4361ee;
+    border-radius: 0.375rem;
+    color: #495057;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+}
+
+.custom-alert i.fas {
+    color: #4361ee;
+    font-size: 1.25rem;
+}
+
+/* Mejoras en las cards */
+.card-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.card-description {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #6c757d;
+}
+
+.card-icon-container {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background-color: rgba(67, 97, 238, 0.1);
+}
+
+.card-icon {
+    font-size: 1.25rem;
+    color: #4361ee;
+}
+
+/* Color específico para cada card */
+.card-icon-primary { color: #4361ee; background-color: rgba(67, 97, 238, 0.1); }
+.card-icon-success { color: #28a745; background-color: rgba(40, 167, 69, 0.1); }
+.card-icon-warning { color: #ffc107; background-color: rgba(255, 193, 7, 0.1); }
+.card-icon-info { color: #17a2b8; background-color: rgba(23, 162, 184, 0.1); }

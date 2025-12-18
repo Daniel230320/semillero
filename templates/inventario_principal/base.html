@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block titulo %}{% endblock titulo %}</title>
+
+        {% load static %}
+
+        <!-- Incluir links -->
+        {% include "components/links.html" %}
+
+        <!-- Bloque links adicionales -->
+        {% block extra_links %}{% endblock extra_links %}
+    </head>
+
+    <body id="page-top">
+
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+
+            <!-- Incluir Sidebar -->
+            {% include "layout/sidebar.html" %}
+
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+
+                <!-- Main Content -->
+                <div id="content">
+
+                    <!-- Incluir Topbar-->
+                    {% include "layout/navbar.html" %}
+
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid" style="font-size: 13.5px;">
+                        {% block contenido %}{% endblock contenido %}
+                    </div>
+
+                </div>
+                <!-- End of Main Content -->
+
+                <!-- Incluir Footer -->
+                {% include "layout/footer.html" %}
+
+            </div>
+            <!-- End of Content Wrapper -->
+
+        </div>
+        <!-- End of Page Wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Incluir Logout Modal-->
+        {% include "components/modal.html" %}
+
+        <!-- Incluir scripts -->
+        {% include "components/scripts.html" %}
+
+        <!-- Bloque scripts adicionales -->
+        {% block script %}{% endblock script %}
+    </body>
+</html>

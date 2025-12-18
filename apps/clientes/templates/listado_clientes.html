@@ -1,0 +1,184 @@
+{% extends "inventario_principal/base.html" %}
+
+{% block titulo %}Listado de Clientes{% endblock titulo %}
+
+{% block contenido %}
+    <!-- Page Heading -->
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Clientes</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb" style="background-color: transparent; padding: 0; margin: 0;">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard:inicio' %}"><i class="fas fa-home mr-2"></i>Inicio</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Clientes</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- Card para Filtrar -->
+    <div class="card shadow mb-2 filtercard">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-search mr-2"></i>Búsqueda</h6>
+            <div>
+                <!-- Botón de Colapsado/Expandido -->
+                <a class="btn btn-sm" type="button" data-toggle="collapse" data-target="#filtroCollapse" aria-expanded="true" aria-controls="filtroCollapse" id="toggleButton">
+                    <i class="fas fa-minus"></i>
+                </a>
+                <!-- Botón X (Cerrar filtro) -->
+                <a class="btn btn-sm" id="closeFilterButton">
+                    <i class="fas fa-times"></i>
+                </a>
+            </div>
+        </div>
+        <div class="collapse show" id="filtroCollapse"> <!-- Contenido colapsable (inicialmente abierto) -->
+            <div class="card-body">
+                {% load crispy_forms_tags %} 
+                <form method="GET" action="" id="filtroForm">
+                    <div class="row">
+                        <div class="col-md-4">
+                            {{ filtro_clientes.form.nombre_cliente|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ filtro_clientes.form.idtipodocumento|as_crispy_field }}
+                        </div>
+                        <div class="col-md-4">
+                            {{ filtro_clientes.form.estado_cliente|as_crispy_field }}
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm mt-2" id="filtrarButton">
+                        <i class="fas fa-filter"></i> Filtrar
+                    </button>
+                    <a href="{{ request.path }}" type="reset" class="btn btn-warning btn-sm mt-2 ml-2">
+                        <i class="fas fa-sync"></i> Limpiar
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center card-csslist">
+            <h6 class="m-0 font-weight-bold text-primary h5"><i class="fas fa-list mr-2"></i>Lista de Clientes</h6>
+        </div>
+        <div class="card-body">
+                <div class="d-flex justify-content-between mb-3">
+                    <!-- Espacio separador (puedes ajustar el tamaño según tus preferencias) -->
+                    <div style="width: 20px;"></div>
+            
+                    <!-- Botón "Nuevo" con la clase ml-auto para alinear a la derecha -->
+                    {% if perms.clientes.crear_clientes %}
+                        <a href="{% url 'clientes:registrar_clientes' %}" class="btn btn-sm btn-primary rounded-pill ml-auto">
+                            <i class="fas fa-plus-circle"></i> Registrar Cliente
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Identificación</th>
+                                <th>Dirección</th>
+                                <th>Contacto</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Puedes agregar o quitar filas según tus necesidades -->
+                            {% if clientes %}
+                                {% for cli in clientes %}
+                                    <tr>
+                                        <td class="col-2">{{ cli.nombre_cliente }}</td>
+                                        <td>{{ cli.numerodocumento }}</td>
+                                        <td class="col-3">{{ cli.direccion_cliente }}</td>
+                                        <td class="col-3">
+                                            <!-- Correo -->
+                                            {% if cli.correo_cliente %}
+                                            <div><a href="mailto:{{ cli.correo_cliente }}"><i class="fas fa-envelope mr-1"></i>{{ cli.correo_cliente }}</a></div>
+                                            {% endif %}
+                                            <!-- Teléfono -->
+                                            {% if cli.telefono_cliente %}
+                                            <div><i class="fas fa-phone mr-1"></i>{{ cli.telefono_cliente }}</div>
+                                            {% endif %}
+                                            <!-- Celular -->
+                                            {% if cli.celular_cliente %}
+                                            <div><i class="fas fa-mobile-alt mr-1"></i>{{ cli.celular_cliente }}</div>
+                                            {% endif %}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span class="badge {% if cli.estado_cliente == 1 %}badge-success{% else %}badge-danger{% endif %}" style="color: white; font-weight: bold; font-size: 13px;">
+                                                {% if cli.estado_cliente == 1 %}
+                                                    Activo
+                                                {% else %}
+                                                    Inactivo
+                                                {% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex">
+                                                <!-- Botón para Ver -->
+                                                {% if perms.clientes.ver_clientes %}
+                                                <button type="button" class="btn btn-info btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver" onclick="abrir_modal_cliente('{% url 'clientes:detalle_cliente' cli.idcliente %}')">
+                                                    <i class="fas fa-eye fa-sm"></i>
+                                                </button>
+                                                {% endif %}
+                                                <!-- Botón para Editar -->
+                                                {% if perms.clientes.editar_clientes %}
+                                                <a href="{% url 'clientes:editar_clientes' cli.idcliente %}" class="btn btn-warning btn-sm mr-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+                                                    <i class="fas fa-edit fa-sm"></i>
+                                                </a>
+                                                {% endif %}
+                                                <!-- Botón para Eliminar -->
+                                                {% if perms.clientes.eliminar_clientes %}
+                                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar" onclick="Eliminar_Cliente({{cli.idcliente}})">
+                                                    <i class="fas fa-trash-alt fa-sm"></i>
+                                                </button>
+                                                {% endif %}
+                                            </div>
+                                        </td>                                                                       
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            <!-- ... -->
+                        </tbody>
+                    </table>
+                </div>
+        </div>
+    </div>
+
+    {% comment %} Modal detalle cliente {% endcomment %}
+    <div class="modal fade" id="cliente" role="dialog">
+    </div>
+{% endblock contenido %}
+
+{% block script %}
+    <!-- SweetAlert para confirmar la eliminación -->
+    <script>
+        function Eliminar_Cliente(id) {
+            Swal.fire({
+                title: "¿Estás seguro de eliminar?",
+                text: "Esta acción no se puede deshacer",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Aceptar",
+                cancelButtonText: "Cancelar",
+                confirmButtonColor: "#4169E1"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/clientes/eliminar_clientes/" + id + "/";
+                }
+            });
+        }
+    </script>
+
+    <!-- Abrir Modal detalle cliente -->
+    <script type="text/javascript">
+        var $ =jQuery.noConflict();
+        function abrir_modal_cliente(url){
+            $('#cliente').load(url, function(){
+                $(this).modal('show');
+            })
+        }
+    </script>
+{% endblock script %}
