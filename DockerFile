@@ -22,4 +22,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Comando de inicio (ajústalo a tu proyecto Django)
-CMD ["gunicorn", "apps.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "proyectoDjango.wsgi:application", "--bind", "0.0.0.0:8000"]
