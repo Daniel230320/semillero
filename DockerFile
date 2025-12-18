@@ -2,13 +2,19 @@ FROM python:3.11-slim
 
 # Instalar dependencias del sistema necesarias para WeasyPrint
 RUN apt-get update && apt-get install -y \
+    build-essential \
+    pkg-config \
+    libcairo2 \
+    libcairo2-dev \
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libpangocairo-1.0-0 \
-    libcairo2 \
-    libgdk-pixbuf2.0-0 \
+    libgdk-pixbuf-2.0-0 \
+    libgirepository1.0-dev \
+    libglib2.0-0 \
     libffi-dev \
-    libgobject-2.0-0 \
+    libharfbuzz0b \
+    libharfbuzz-subset0 \
     && rm -rf /var/lib/apt/lists/*
 
 # Crear directorio de la app
