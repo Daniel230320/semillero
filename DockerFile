@@ -1,21 +1,23 @@
-FROM python:3.11-slim-bookworm
+FROM python:3.11-bookworm
 
-# 1. ACTUALIZAR e instalar dependencias del sistema CRÍTICAS para WeasyPrint
+# 1. Instalar TODAS las dependencias del sistema que WeasyPrint necesita
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # Bibliotecas ABSOLUTAMENTE NECESARIAS para WeasyPrint
+    # Bibliotecas CORE de WeasyPrint (CRÍTICAS)
     libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libpangocairo-1.0-0 \
+    libharfbuzz0b \
+    libharfbuzz-gobject0 \
+    libharfbuzz-icu0 \
     libcairo2 \
-    libcairo2-dev \
+    libcairo-gobject2 \
     libgdk-pixbuf-2.0-0 \
     libgdk-pixbuf2.0-0 \
     libgirepository-1.0-1 \
+    gir1.2-pango-1.0 \
     libglib2.0-0 \
     libgobject-2.0-0 \
-    libffi-dev \
-    libharfbuzz0b \
-    libharfbuzz-subset0 \
+    libffi8 \
     libfontconfig1 \
     libfreetype6 \
     libxml2 \
@@ -24,7 +26,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg62-turbo \
     libtiff6 \
     libwebp7 \
-    # Bibliotecas de desarrollo para compilación
+    libopenjp2-7 \
+    # Bibliotecas de desarrollo PARA COMPILACIÓN
     libcairo2-dev \
     libpango1.0-dev \
     libgdk-pixbuf2.0-dev \
@@ -32,30 +35,41 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libjpeg-dev \
     libtiff-dev \
     libwebp-dev \
+    libharfbuzz-dev \
+    libfreetype6-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    libpng-dev \
     # Herramientas de compilación
     build-essential \
     pkg-config \
+    python3-dev \
+    # Gestión de fuentes
+    fonts-dejavu-core \
+    fonts-liberation \
+    # Utilidades
     wget \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Instalar librerías Python necesarias para la compilación de WeasyPrint
-RUN pip install --no-cache-dir --upgrade pip \
+# 2. Instalar cairocffi y dependencias Python ANTES de requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
     && pip install --no-cache-dir \
-    cffi \
-    pillow \
-    cairocffi \
-    setuptools
+    cffi==1.15.1 \
+    cairocffi==1.6.1 \
+    Pillow==10.1.0
 
 # 3. Establecer directorio de trabajo
 WORKDIR /app
 
-# 4. Copiar requirements.txt e instalar dependencias Python
+# 4. Copiar requirements.txt (asegúrate de que tiene weasyprint)
 COPY requirements.txt .
+
+# 5. Instalar dependencias Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 5. Copiar el resto del código
+# 6. Copiar el resto del código
 COPY . .
 
-# 6. Comando para iniciar (AJUSTA 'proyectoDjango' al nombre de tu proyecto)
-CMD ["gunicorn", "proyectoDjango.wsgi:application", "--bind", "0.0.0.0:$PORT"]
+# 7. Comando para Railway (usa $PORT automático)
+CMD gunicorn proyectoDjango.wsgi:application --bind 0.0.0.0:$PORT --workers 3
