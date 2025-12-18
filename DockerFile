@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+# Instalar dependencias del sistema necesarias para WeasyPrint
+RUN apt-get update && apt-get install -y \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libpangocairo-1.0-0 \
+    libcairo2 \
+    libgdk-pixbuf2.0-0 \
+    libffi-dev \
+    libgobject-2.0-0 \
+    && rm -rf /var/lib/apt/lists/*
+
+# Crear directorio de la app
+WORKDIR /app
+
+# Copiar requirements e instalar
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el resto del código
+COPY . .
+
+# Comando de inicio (ajústalo a tu proyecto Django)
+CMD ["gunicorn", "apps.wsgi:application", "--bind", "0.0.0.0:8000"]
