@@ -119,10 +119,19 @@ WSGI_APPLICATION = 'proyectoDjango.wsgi.application'
 #     },
 # }
 
+# DATABASES = {
+#     'default': dj_database_url.config(
+#         default=os.environ.get('DATABASE_URL', 'postgresql://postgres:12345@localhost:5432/control_inventario'),
+#         conn_max_age=600
+#     )
+# }
+
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL', 'postgresql://postgres:12345@localhost:5432/control_inventario'),
-        conn_max_age=600
+        # Railway te inyecta DATABASE_URL automáticamente en las variables de entorno
+        default=os.environ.get('DATABASE_PUBLIC_URL'),
+        conn_max_age=600,
+        ssl_require=True  # recomendable en Railway para conexiones seguras
     )
 }
 
