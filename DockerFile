@@ -1,46 +1,61 @@
-FROM python:3.11-slim-bullseye  # Usa una versión base específica
+FROM python:3.11-slim-bookworm
 
-# 1. Instalar dependencias del sistema necesarias para WeasyPrint y compilación
+# 1. ACTUALIZAR e instalar dependencias del sistema CRÍTICAS para WeasyPrint
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    # Bibliotecas GRÁFICAS y RENDERIZADO (Críticas para WeasyPrint)
+    # Bibliotecas ABSOLUTAMENTE NECESARIAS para WeasyPrint
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libpangocairo-1.0-0 \
     libcairo2 \
     libcairo2-dev \
-    libpango-1.0-0 \
-    libpangocairo-1.0-0 \
     libgdk-pixbuf-2.0-0 \
     libgdk-pixbuf2.0-0 \
-    # Biblioteca GOOBJECT (¡Esta es la que te falta!)
+    libgirepository-1.0-1 \
+    libglib2.0-0 \
     libgobject-2.0-0 \
-    # Bibliotecas de FUENTES y TEXTO
+    libffi-dev \
     libharfbuzz0b \
     libharfbuzz-subset0 \
     libfontconfig1 \
-    # Bibliotecas de DESARROLLO para compilar extensiones Python
+    libfreetype6 \
+    libxml2 \
+    libxslt1.1 \
+    libpng16-16 \
+    libjpeg62-turbo \
+    libtiff6 \
+    libwebp7 \
+    # Bibliotecas de desarrollo para compilación
+    libcairo2-dev \
+    libpango1.0-dev \
+    libgdk-pixbuf2.0-dev \
     libffi-dev \
     libjpeg-dev \
-    libgirepository1.0-dev \
-    libglib2.0-dev \
-    pkg-config \
-    # Herramientas de COMPILACIÓN para instalar paquetes Python
+    libtiff-dev \
+    libwebp-dev \
+    # Herramientas de compilación
     build-essential \
-    gcc \
-    # Herramientas del SISTEMA
+    pkg-config \
     wget \
+    ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Establecer directorio de trabajo
+# 2. Instalar librerías Python necesarias para la compilación de WeasyPrint
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir \
+    cffi \
+    pillow \
+    cairocffi \
+    setuptools
+
+# 3. Establecer directorio de trabajo
 WORKDIR /app
 
-# 3. Copiar requirements ANTES del código para aprovechar la caché de Docker
+# 4. Copiar requirements.txt e instalar dependencias Python
 COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. Instalar dependencias de Python
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
-
-# 5. Copiar el resto del código de la aplicación
+# 5. Copiar el resto del código
 COPY . .
 
-# 6. Comando para iniciar la aplicación Django
-# Asegúrate de que "proyectoDjango.wsgi" coincida con el nombre de tu proyecto
-CMD ["gunicorn", "proyectoDjango.wsgi:application", "--bind", "0.0.0.0:8000"]
+# 6. Comando para iniciar (AJUSTA 'proyectoDjango' al nombre de tu proyecto)
+CMD ["gunicorn", "proyectoDjango.wsgi:application", "--bind", "0.0.0.0:$PORT"]
