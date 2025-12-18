@@ -1,31 +1,46 @@
-FROM python:3.11-slim
+FROM python:3.11-slim-bullseye  # Usa una versión base específica
 
-# Instalar dependencias del sistema necesarias para WeasyPrint
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    pkg-config \
+# 1. Instalar dependencias del sistema necesarias para WeasyPrint y compilación
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # Bibliotecas GRÁFICAS y RENDERIZADO (Críticas para WeasyPrint)
     libcairo2 \
     libcairo2-dev \
     libpango-1.0-0 \
-    libpangoft2-1.0-0 \
     libpangocairo-1.0-0 \
     libgdk-pixbuf-2.0-0 \
-    libgirepository1.0-dev \
-    libglib2.0-0 \
-    libffi-dev \
+    libgdk-pixbuf2.0-0 \
+    # Biblioteca GOOBJECT (¡Esta es la que te falta!)
+    libgobject-2.0-0 \
+    # Bibliotecas de FUENTES y TEXTO
     libharfbuzz0b \
     libharfbuzz-subset0 \
+    libfontconfig1 \
+    # Bibliotecas de DESARROLLO para compilar extensiones Python
+    libffi-dev \
+    libjpeg-dev \
+    libgirepository1.0-dev \
+    libglib2.0-dev \
+    pkg-config \
+    # Herramientas de COMPILACIÓN para instalar paquetes Python
+    build-essential \
+    gcc \
+    # Herramientas del SISTEMA
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Crear directorio de la app
+# 2. Establecer directorio de trabajo
 WORKDIR /app
 
-# Copiar requirements e instalar
+# 3. Copiar requirements ANTES del código para aprovechar la caché de Docker
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar el resto del código
+# 4. Instalar dependencias de Python
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+# 5. Copiar el resto del código de la aplicación
 COPY . .
 
-# Comando de inicio (ajústalo a tu proyecto Django)
+# 6. Comando para iniciar la aplicación Django
+# Asegúrate de que "proyectoDjango.wsgi" coincida con el nombre de tu proyecto
 CMD ["gunicorn", "proyectoDjango.wsgi:application", "--bind", "0.0.0.0:8000"]
