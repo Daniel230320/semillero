@@ -21,11 +21,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copiar el resto del código
 COPY . .
 
-# Copiar y preparar el script de build
-COPY build.sh /build.sh
-RUN chmod +x /build.sh
-RUN /build.sh
-
-# Comando de inicio (solo arranca Gunicorn)
+# Comando de inicio (ajústalo a tu proyecto Django)
 CMD ["gunicorn", "proyectoDjango.wsgi:application", "--bind", "0.0.0.0:8000"]
-
